@@ -10,7 +10,10 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+include "user.php";
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+
