@@ -17,8 +17,10 @@ class CreateUsersTable extends Migration
             $table->increments('id');
             $table->string('openid');
             $table->string('session_key');
-            $table->string('phone')->nullable();
-            $table->string('nickname')->nullable();
+            $table->string('phone')->default('未填写');
+            $table->string('nickname')->default('未填写');
+            $table->string('figure')->default('未填写');
+            $table->string('signature')->default('未填写');
             $table->string('avatar_url')->default('https://cdn.lyzwhh.top/avatar.jpg');
             $table->timestamps();
         });

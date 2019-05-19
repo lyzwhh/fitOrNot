@@ -46,4 +46,30 @@ class UserController extends Controller
 
         ]);
     }
+
+    public function setUserInfo(Request $request)
+    {
+
+        $this->validate($request,[
+            'figure'    =>  'required',
+            'signature' =>  'required'
+        ]);
+        $userInfo = $request->user;
+        $this->userService->setUserInfo($userInfo,$request['figure'],$request['signature']);
+
+        return response([
+            'code'  =>  0
+        ]);
+
+    }
+
+    public function getUserInfo(Request $request)
+    {
+        $userInfo = $request->user;
+        $detail = $this->userService->getUserInfo($userInfo);
+        return response([
+            'code'  =>   0,
+            'data'  =>  $detail
+        ]);
+    }
 }

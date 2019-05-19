@@ -8,4 +8,6 @@
 
 Route::group(['prefix' => 'user'],function (){
     Route::post('/code2session','UserController@code2session');
+    Route::post('/userInfo','UserController@setUserInfo')->middleware('token');
+    Route::get('/userInfo','UserController@getUserInfo')->middleware('token');
 });

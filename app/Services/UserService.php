@@ -43,4 +43,14 @@ class UserService
         $userId = DB::table('users')->insertGetId($userInfo);
         return $userId;
     }
+    public function setUserInfo($userInfo,$figure,$signature)
+    {
+        DB::table('users')->where('openid',$userInfo->openid)->update(['figure'   =>  $figure,
+            'signature'   =>  $signature]);
+    }
+    public function getUserInfo($userInfo)
+    {
+        $detail = DB::table('users')->where('openid',$userInfo->openid)->select('phone', 'avatar_url','nickname','figure','signature')->first();
+        return $detail;
+    }
 }
