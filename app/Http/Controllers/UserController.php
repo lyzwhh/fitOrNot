@@ -27,20 +27,20 @@ class UserController extends Controller
             'code' => 'required'
         ]);
         $loginInfo = $request->all();
-        $userInfo = $this->wxxcxService->login($loginInfo['code']);   //包含open_id,session_key,(unionid),
+        $userInfo = $this->wxxcxService->login($loginInfo['code']);   //包含openid,session_key,(unionid),
                                                                     //errcode,errmsg
         if ($userInfo['errcode'] != 0)
         {
-            return response(['errcode' => $userInfo['errcode']
-                            ,'errmsg' => $userInfo['errmsg']]);
+            return response($userInfo);
         }
+//        return response($userInfo);
         $userId = $this->userService->updateUser($userInfo);
         $token = $this->tokenService->makeToken($userId);
         return response([
             'errcode'  =>  0,
             'data'  =>  [
                 'token' =>  $token,
-                'open_id'   =>  $userInfo['open_id'],
+                'openid'   =>  $userInfo['openid'],
                 'session_key'   =>  $userInfo['session_key']
             ]
 

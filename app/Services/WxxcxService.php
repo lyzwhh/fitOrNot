@@ -16,12 +16,9 @@ Class WxxcxService
         $code2session_url = sprintf($this->CODE2SESSION_URL,env('WX_APP_ID'),env('WX_APP_SECRET'),$js_code);
         $userInfo = $this->httpRequest($code2session_url);
         if(!isset($userInfo['session_key'])){
-            return [
-                'errcode' => 10000,
-                'errmsg' => '获取 session_key 失败',
-                'data'  =>  $userInfo
-            ];
+            return $userInfo;
         }
+        $userInfo['errcode'] = 0;
         return $userInfo;
     }
 

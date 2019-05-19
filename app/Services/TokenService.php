@@ -82,7 +82,7 @@ class TokenService
     public function getUserByToken($tokenStr)
     {
         $tokenInfo = $this->getToken($tokenStr);
-        $userInfo=DB::table('users')->where('id',$tokenInfo->user_id)->select('id','open_id','session_key','phone','avatar_url','nickname')->first();  //修改
+        $userInfo=DB::table('users')->where('id',$tokenInfo->user_id)->select('id','openid','session_key','phone','avatar_url','nickname')->first();  //修改
         return $userInfo;
     }
 

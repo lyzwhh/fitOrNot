@@ -8,7 +8,7 @@
 
 namespace App\Services;
 use Carbon\Carbon;
-
+use Illuminate\Support\Facades\DB;
 class UserService
 {
     public function login()
@@ -18,14 +18,16 @@ class UserService
 
     public function updateUser($userInfo)
     {
-        $user = DB::table('users')->where('open_id',$userInfo['open_id'])->first();
+        $user = DB::table('users')->where('openid',$userInfo['openid'])->first();
         if($user == null)
         {
-            $userId = $this->createUser($userInfo);
+            $userId = $this->createUser(['openid'   =>  $userInfo['openid'],
+                                    'session_key'   =>  $userInfo['session_key']]);
         }
         else
         {
-            DB::table('users')->where('open_id',$userInfo['open_id'])->update($userInfo);
+            DB::table('users')->where('openid',$userInfo['openid'])->update(['openid'   =>  $userInfo['openid'],
+                                                                        'session_key'   =>  $userInfo['session_key']]);
             $userId = $user['id'];
         }
         return $userId;
