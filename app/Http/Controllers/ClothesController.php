@@ -42,8 +42,7 @@ class ClothesController extends Controller
 
         return response([
             'errode'  =>  0,
-            'data'  =>  $clothes,
-            'AccessToken'  => $this->wxxcxService->getAccessToken()
+            'data'  =>  $clothes
         ]);
     }
 }
