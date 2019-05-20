@@ -11,7 +11,7 @@
 |
 */
 include "user.php";
-
+include "clothes.php";
 Route::get('/', function () {
     return view('welcome');
 });

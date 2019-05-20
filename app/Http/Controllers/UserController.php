@@ -58,7 +58,7 @@ class UserController extends Controller
         $this->userService->setUserInfo($userInfo,$request['figure'],$request['signature']);
 
         return response([
-            'code'  =>  0
+            'errrcode'  =>  0
         ]);
 
     }
@@ -68,7 +68,7 @@ class UserController extends Controller
         $userInfo = $request->user;
         $detail = $this->userService->getUserInfo($userInfo);
         return response([
-            'code'  =>   0,
+            'errcode'  =>   0,
             'data'  =>  $detail
         ]);
     }
