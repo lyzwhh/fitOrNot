@@ -45,4 +45,29 @@ class ClothesController extends Controller
             'data'  =>  $clothes
         ]);
     }
+
+    public function updateClothes(Request $request)
+    {
+        $this->validate($request,[
+            'clothes.*.id' =>  'required'
+        ]);
+        $userInfo = $request['user'];
+        $clothesInfo = $request['clothes'];
+        foreach ($clothesInfo as $clothes)
+        {
+            if ($this->clothesService->updateClothes($clothes,$userInfo->openid) == -1)
+            {
+                return response([
+                    'errcode'  =>  -1,
+                    'errmsg'   =>  "非衣服主人,无法修改"
+                ]);
+            }
+        }
+
+        return response([
+            'errode'  =>  0
+        ]);
+    }
+
+
 }

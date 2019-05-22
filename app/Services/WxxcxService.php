@@ -46,10 +46,7 @@ Class WxxcxService
         $accessToken_url = sprintf($this->ACCESSTOKEN_URL,env('WX_APP_ID'),env('WX_APP_SECRET'));
         $accessTokenInfo = $this->httpRequest($accessToken_url);
         if(!isset($accessTokenInfo['access_token'])){
-            return response([
-                'errcode' => $accessTokenInfo['errcode'],
-                'errmsg' => $accessTokenInfo['errmsg']
-            ]);
+            return $accessTokenInfo;
         }
         $accessTokenInfo['errcode'] = 0;
         return $accessTokenInfo;
@@ -92,7 +89,9 @@ Class WxxcxService
         else
         {
             $accessTokenInfo = $this->receiveAccessToken();
-
+            if(!isset($accessTokenInfo['access_token'])){
+                return -1;                      //TODO:: 接下这个-1
+            }
             $this->redisService->setAccessToken($accessTokenInfo['access_token']);
             return $accessTokenInfo['access_token'];
 
