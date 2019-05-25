@@ -22,6 +22,11 @@ class CreateUsersTable extends Migration
             $table->string('figure')->default('未填写');
             $table->string('signature')->default('未填写');
             $table->string('avatar_url')->default('https://cdn.lyzwhh.top/avatar.jpg');
+
+            $table->integer('total')->default(0);
+            $table->integer('vip')->default(0); // 0 为免费会员
+            $table->integer('hide_figure')->default(0);
+
             $table->timestamps();
         });
     }

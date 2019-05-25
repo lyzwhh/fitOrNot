@@ -9,7 +9,7 @@
 namespace App\Services;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-
+use Exception;
 class ClothesService
 {
     public function setClothes($openid,$clothes)
@@ -19,7 +19,18 @@ class ClothesService
         $clothes['created_at'] = $now;
         $clothes['updated_at'] = $now;
 
-        DB::table('clothes')->insertGetId($clothes);
+
+        DB::beginTransaction();
+        try {
+
+            DB::table('clothes')->insertGetId($clothes);
+            DB::table('users')->increment('total');
+            DB::commit();
+        } catch ( Exception $e){
+//            echo $e->getMessage();
+            DB::rollBack();
+        }
+
     }
 
     public function getClothes($openid)
@@ -44,7 +55,7 @@ class ClothesService
     public function checkOwner($clothesId,$owner)
     {
         $clothes = DB::table('clothes')->where('id',$clothesId)->first();
-        if ($clothes->owner != $owner)
+        if ($clothes != null && $clothes->owner != $owner)
         {
             return -1;
         }
@@ -52,5 +63,28 @@ class ClothesService
         {
             return 0;
         }
+    }
+
+    public function deleteClothes($id)
+    {
+
+        DB::beginTransaction();
+        try {
+            DB::table('clothes')->where('id',$id)->delete();
+            DB::table('users')->decrement('total');
+            DB::commit();
+        } catch ( Exception $e){
+            echo $e->getMessage();
+            DB::rollBack();
+        }
+    }
+
+
+
+
+    public function checkFree($openid)
+    {
+//        $total = DB::table('users')->where('openid',$openid)->pluck('total');
+//        if ($total > )
     }
 }

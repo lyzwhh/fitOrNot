@@ -69,5 +69,25 @@ class ClothesController extends Controller
         ]);
     }
 
+    public function deleteClothes($id,Request $request)
+    {
+        $userInfo = $request['user'];
+        if ($this->clothesService->checkOwner($id,$userInfo->openid) != 0)
+        {
+            return response([
+                'errcode'  =>  -1,
+                'errmsg'   =>  "非衣服主人,无法修改"
+            ]);
+        }
+        else
+        {
+            $this->clothesService->deleteClothes($id);
+        }
+        return response([
+            'errcode'   =>   0,
+            'errmsg'    =>  '删除完成'
+        ]);
+    }
+
 
 }
