@@ -49,12 +49,12 @@ class UserController extends Controller
 
     public function setUserInfo(Request $request)
     {
-
         $this->validate($request,[
-            'figure'    =>  'required',
             'signature' =>  'required'
         ]);
         $userInfo = $request->user;
+        $figure = $request['figure'];
+//        return $request->all();
         $this->userService->setUserInfo($userInfo,$request['figure'],$request['signature']);
 
         return response([

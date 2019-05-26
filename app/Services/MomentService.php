@@ -28,9 +28,14 @@ class MomentService
 
         $momentData = DB::table('moments')->where('status',0)
             ->join('users','moments.writer','=','users.openid')
-            ->select('moments.pics_url','moments.content','moments.likes_num','moments.comments_num','users.id as writerId','moments.id')
+            ->select('moments.pics_url','moments.content','moments.likes_num','moments.comments_num','users.id as writerId','users.avatar_url','moments.id')
             ->orderBy('moments.created_at', 'desc')
             ->paginate(24);
         return $momentData;
+    }
+
+    public function getMomentDetail()
+    {
+
     }
 }

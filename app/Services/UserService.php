@@ -16,7 +16,7 @@ class UserService
 
     }
 
-    public function updateUser($userInfo)
+    public function updateUser($userInfo)  //有则调用更新,没有就创建,因为会更新session_key
     {
         $user = DB::table('users')->where('openid',$userInfo['openid'])->first();
         if($user == null)
@@ -45,18 +45,20 @@ class UserService
     }
     public function setUserInfo($userInfo,$figure,$signature)
     {
-        DB::table('users')->where('openid',$userInfo->openid)->update(['figure'   =>  $figure,
-            'signature'   =>  $signature]);
+        $data = array_merge($figure,[
+            'signature' =>  $signature
+        ]);
+        DB::table('users')->where('openid',$userInfo->openid)->update($data);
     }
     public function getUserInfo($userInfo)
     {
-        $detail = DB::table('users')->where('openid',$userInfo->openid)->select('phone', 'avatar_url','nickname','figure','signature')->first();
+        $detail = DB::table('users')->where('openid',$userInfo->openid)->select('phone', 'avatar_url','nickname','height','weight','signature','liked')->first();
         return $detail;
     }
 
     public function getOthersInfo($id)
     {
-        $detail = DB::table('users')->where('id',$id)->select('phone', 'avatar_url','nickname','figure','signature')->first();  //TODO ::修改,等原型需要展示什么
+        $detail = DB::table('users')->where('id',$id)->select('phone', 'avatar_url','nickname','nickname','height','signature')->first();  //TODO ::修改,等原型需要展示什么
         return $detail;
     }
 

@@ -19,11 +19,13 @@ class CreateUsersTable extends Migration
             $table->string('session_key');
             $table->string('phone')->default('未填写');
             $table->string('nickname')->default('未填写');
-            $table->string('figure')->default('未填写');
+            $table->string('height')->default('未填写');
+            $table->string('weight')->default('未填写');
             $table->string('signature')->default('未填写');
+            $table->integer('liked')->default(0);
             $table->string('avatar_url')->default('https://cdn.lyzwhh.top/avatar.jpg');
 
-            $table->integer('total')->default(0);
+            $table->integer('total')->default(0); //衣服数量
             $table->integer('vip')->default(0); // 0 为免费会员
             $table->integer('hide_figure')->default(0);
 

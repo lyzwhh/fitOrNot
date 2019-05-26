@@ -83,7 +83,7 @@ class TokenService
     {
         $tokenInfo = $this->getToken($tokenStr);
         $userInfo=DB::table('users')->where('id',$tokenInfo->user_id)->select('id','openid','session_key','phone',
-                                                                        'avatar_url','nickname','figure','signature')->first();  //修改
+                                                                        'avatar_url','nickname','weight','height','signature')->first();  //修改
         return $userInfo;
     }
 
