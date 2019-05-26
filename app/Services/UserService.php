@@ -53,4 +53,22 @@ class UserService
         $detail = DB::table('users')->where('openid',$userInfo->openid)->select('phone', 'avatar_url','nickname','figure','signature')->first();
         return $detail;
     }
+
+    public function getOthersInfo($id)
+    {
+        $detail = DB::table('users')->where('id',$id)->select('phone', 'avatar_url','nickname','figure','signature')->first();  //TODO ::修改,等原型需要展示什么
+        return $detail;
+    }
+
+    public function getIdByOpenid($openid)
+    {
+        $id = DB::table('users')->where('openid',$openid)->pluck('id');
+        return $id;
+    }
+
+    public function getOpenidById($id)
+    {
+        $openid = DB::table('users')->where('id',$id)->pluck('openid');
+        return $openid;
+    }
 }

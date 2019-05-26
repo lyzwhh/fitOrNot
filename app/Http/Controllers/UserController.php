@@ -72,4 +72,12 @@ class UserController extends Controller
             'data'  =>  $detail
         ]);
     }
+    public function getOthersInfo($id)
+    {
+        $detail = $this->userService->getOthersInfo($id);
+        return response([
+            'errcode'   =>  0,
+            'data'  =>  $detail
+        ]);
+    }
 }

@@ -12,6 +12,8 @@
 */
 include "user.php";
 include "clothes.php";
+include "comment.php";
+include "moment.php";
 Route::get('/', function () {
     return view('welcome');
 });
