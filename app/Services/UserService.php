@@ -56,21 +56,88 @@ class UserService
         return $detail;
     }
 
-    public function getOthersInfo($id)
+    public function getOthersInfo($openid)
     {
-        $detail = DB::table('users')->where('id',$id)->select('phone', 'avatar_url','nickname','nickname','height','signature')->first();  //TODO ::修改,等原型需要展示什么
+        $hide = DB::table('users')->where('openid',$openid)->pluck('hide_figure');
+//        return $hide[0];
+        if ($hide[0] == 1)         //隐藏
+        {
+            $detail = DB::table('users')->where('openid',$openid)->select('avatar_url','nickname','openid','signature','liked')->first();
+        }
+        else                    //显示
+        {
+            $detail = DB::table('users')->where('openid',$openid)->select('avatar_url','nickname','openid','weight','height','signature','liked')->first();
+        }
+
         return $detail;
     }
 
-    public function getIdByOpenid($openid)
+    public function createFollow($from,$to)
     {
-        $id = DB::table('users')->where('openid',$openid)->pluck('id');
-        return $id;
+        if ($from == $to)
+        {
+            return -1;          //关注自己
+        }
+        else if ($this->checkIfFollowed($from,$to))
+        {
+            DB::table('follows')->insert([
+                'from'  =>  $from,
+                'to'    =>  $to,
+                'created_at'    =>  Carbon::now(),
+                'updated_at'    =>  Carbon::now()
+            ]);
+            return 1;           //成功
+        }
+        else
+        {
+            return -2;          //已经关注
+        }
+
     }
 
-    public function getOpenidById($id)
+    public function deleteFollow($from,$to)
     {
-        $openid = DB::table('users')->where('id',$id)->pluck('openid');
-        return $openid;
+        DB::table('follows')->where([
+            'from'  =>  $from,
+            'to'    =>  $to
+        ])->delete();
     }
+
+    public function checkIfFollowed($from,$to)
+    {
+        $data = DB::table('follows')->where([
+            'from'  =>  $from,
+            'to'    =>  $to
+        ])->first();
+        return ($data == null);   //没关注返回1
+    }
+
+    public function getAllFollowed($openid)
+    {
+        $data = DB::table('follows')->where([
+            'from'  =>  $openid
+        ])  ->select('to')
+            ->orderBy('created_at', 'desc')
+            ->paginate(30);
+        return $data;
+    }
+
+    public function getNicknameByOpenid($openid)
+    {
+        $data = DB::table('users')->where('openid',$openid)->pluck('nickname');
+        return $data[0];
+    }
+
+//    public function getIdByOpenid($openid)
+//    {
+//        $id = DB::table('users')->where('openid',$openid)->pluck('id');
+//        return $id;
+//    }
+//
+//    public function getOpenidById($id)
+//    {
+//        $openid = DB::table('users')->where('id',$id)->pluck('openid');
+//        return $openid;
+//    }
+
 }

@@ -34,16 +34,12 @@ class MomentController extends Controller
 
     public function getMoment()
     {
-        $momentDate = $this->momentService->getNewestMoment();
-        foreach ($momentDate as $m)
-        {
-            $m->pics_url = json_decode($m->pics_url);
-//            $m->writer = $this->userService->getIdByOpenid($m->writer);
-        }
+        $momentData = $this->momentService->getNewestMoment();
+
 
         return response([
             'errcode' => 0,
-            'data' => $momentDate
+            'data' => $momentData
         ]);
     }
 
@@ -56,5 +52,75 @@ class MomentController extends Controller
     {
 
     }
+
+    public function getMomentByOpenid($openid)
+    {
+        $data = $this->momentService->getMomentByOpenid($openid);
+        return response([
+            'errcode'   =>  0,
+            'data'  =>  $data
+        ]);
+    }
+
+    public function createLike($id,Request $request)        //id为moment的id
+    {
+        $result = $this->momentService->createLike($request['user']->openid,$id);
+        if($result == 1)
+        {
+            return response([
+                'errcode'   =>  0
+            ]);
+        }
+        else if ($result == -1)
+        {
+            return response([
+                'errcode'   =>   -1,
+                'errmsg'    =>  '不可重复like'
+            ]);
+        }
+    }
+
+    public function deleteLike($id,Request $request)
+    {
+        $this->momentService->deleteLike($request['user']->openid,$id);
+        return response([
+            'errcode'   =>  0
+        ]);
+    }
+
+    public function checkIfLiked($id,Request $request)
+    {
+        $result = $this->momentService->checkIfLiked($request['user']->openid,$id);
+
+        if ($result == 1)
+        {
+            return response([
+                'errcode'  =>0      //表示没有like,能够进行like
+            ]);
+        }
+        else
+        {
+            return response([
+                'errcode' =>-1      //已经like
+            ]);
+        }
+    }
+
+    public function createComment(Request $request)
+    {
+        $this->validate($request,[
+            'comment.content'   =>  'required',
+            'comment.to'    =>  'required'
+        ]);
+        $commentInfo = $request['comment'];
+        $commentInfo['from'] = $request['user']->openid;
+        $this->momentService->createComment($commentInfo);
+        return response([
+            'errcode'   =>  0
+        ]);
+//        return $request->all();
+
+    }
+
 
 }

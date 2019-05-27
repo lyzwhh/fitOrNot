@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\MomentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use App\Services\WxxcxService;
@@ -12,13 +13,16 @@ class UserController extends Controller
     private $wxxcxService;
     private $tokenService;
     private $userService;
+    private $momentService;
     public function __construct(WxxcxService $wxxcxService,
                                 TokenService $tokenService,
-                                UserService $userService)
+                                UserService $userService,
+                                MomentService $momentService)
     {
         $this->wxxcxService = $wxxcxService;
         $this->tokenService = $tokenService;
         $this->userService = $userService;
+        $this->momentService = $momentService;
     }
 
     public function code2session(Request $request)
@@ -72,12 +76,87 @@ class UserController extends Controller
             'data'  =>  $detail
         ]);
     }
-    public function getOthersInfo($id)
+    public function getOthersInfo($openid)
     {
-        $detail = $this->userService->getOthersInfo($id);
+        $detail = $this->userService->getOthersInfo($openid);
+        $moment = $this->momentService->getMomentByOpenid($openid);
+        $data = array();
+        $data['userInfo'] = $detail;
+        $data['moment'] = $moment;
         return response([
             'errcode'   =>  0,
-            'data'  =>  $detail
+            'data'  =>  $data
+        ]);
+    }
+
+    public function createFollow($openid,Request $request)
+    {
+        $flag = $this->userService->createFollow($request['user']->openid,$openid);
+        if ($flag == 1)
+        {
+            return response([
+                'errcode'   =>0,
+                'errmsg'    =>  '关注成功'
+            ]);
+        }
+        else if ($flag == -1)
+        {
+            return response([
+                'errcode'   =>  -1,
+                'errmsg'    =>  '不能关注自己'
+            ]);
+        }
+        else if ($flag == -2)
+        {
+            return response([
+                'errcode'   =>  -2,
+                'errmsg'    =>  '已经关注,不能重复关注'
+            ]);
+        }
+
+    }
+
+    public function deleteFollow($openid,Request $request)
+    {
+        $this->userService->deleteFollow($request['user']->openid,$openid);
+        return response([
+            'errcode'   =>  '0',
+            'errmsg'    =>  '取消关注成功'
+        ]);
+    }
+
+    public function checkIfFollowed($openid,Request $request)
+    {
+        $result = $this->userService->checkIfFollowed($request['user']->openid,$openid);
+        if ($result == 1)
+        {
+            return response([
+                'errcode'  =>0      //表示没有关注,能够进行关注
+            ]);
+        }
+        else
+        {
+            return response([
+                'errcode' =>-1      //已经关注
+            ]);
+        }
+    }
+
+    public function getAllFollowed(Request $request)
+    {
+        $data = $this->userService->getAllFollowed($request['user']->openid);
+        return response([
+            'errcode'   =>  0,
+            'data'  =>$data
+        ]);
+    }
+
+    public function getNicknameByOpenid($openid)
+    {
+        $data = $this->userService->getNicknameByOpenid($openid);
+        return response([
+            'errcode'   =>0,
+            'data'      =>$data
         ]);
     }
 }
