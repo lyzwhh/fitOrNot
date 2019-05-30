@@ -169,7 +169,7 @@ class MomentService
     public function getCommentByMoment($momentId)
     {
         $data = DB::table('comments')->where('to',$momentId)->select('from','refer','content','created_at')
-                             ->orderBy('created_at','incs')
+                             ->orderBy('created_at','asc')
                              ->get();
         foreach ($data as $d) {
             $fromName = DB::table('users')->where('openid',$d->from)->pluck('nickname');
