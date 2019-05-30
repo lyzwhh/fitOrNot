@@ -168,7 +168,7 @@ class MomentService
 
     public function getCommentByMoment($momentId)
     {
-        $data = DB::table('comments')->where('to',$momentId)->select('from','refer','content','created_at')
+        $data = DB::table('comments')->where('to',$momentId)->select('id','from','refer','content','created_at')
                              ->orderBy('created_at','asc')
                              ->get();
         foreach ($data as $d) {
