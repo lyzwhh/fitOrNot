@@ -18,4 +18,6 @@ Route::group(['prefix' => 'user'],function (){
     Route::get('/checkIfFollowed/{openid}','UserController@checkIfFollowed')->middleware('token');
 
     Route::get('/getNicknameByOpenid/{openid}','UserController@getNicknameByOpenid')->middleware('token');
+
+    Route::get('/getConfig','UserController@getConfig')->middleware('token');
 });

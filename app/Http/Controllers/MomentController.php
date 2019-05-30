@@ -122,5 +122,30 @@ class MomentController extends Controller
 
     }
 
+    public function deleteComment($commentId,Request $request)
+    {
+        $userInfo = $request['user'];
+        if ($userInfo->openid != $this->momentService->getCommentOwner($commentId))
+        {
+            return response([
+                'errcode'  =>  -1,
+                'errmsg'    =>  '非评论主人'
+            ]);
+        }
+        $this->momentService->deleteComment($commentId);
+        return response([
+            'errcode'   =>  0
+        ]);
+    }
+
+    public function getCommentByMoment($momentId)
+    {
+        $data = $this->momentService->getCommentByMoment($momentId);
+
+        return response([
+            'errcode'   =>  0,
+            'data'  =>  $data
+        ]);
+    }
 
 }

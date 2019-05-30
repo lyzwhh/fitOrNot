@@ -137,4 +137,49 @@ class MomentService
             DB::rollBack();
         }
     }
+
+    // 返回评论的作者的openid
+    public function getCommentOwner($commentId)
+    {
+        $openid = DB::table('comments')->where('id',$commentId)->pluck('from');
+        if ($openid != null)
+        {
+            return $openid[0];
+        }
+        return null;
+    }
+
+    public function deleteComment($commentId)
+    {
+        DB::beginTransaction();
+        try {
+            $momentId = DB::table('comments')->where('id',$commentId)->pluck('to');
+            DB::table('comments')->where('id',$commentId)->delete();
+            DB::table('moments')->where('id',$momentId)->decrement('comments_num');
+
+            DB::commit();
+        } catch ( Exception $e){
+//            echo $e->getMessage();
+            DB::rollBack();
+        }
+    }
+
+
+
+    public function getCommentByMoment($momentId)
+    {
+        $data = DB::table('comments')->where('to',$momentId)->select('from','refer','content','created_at')
+                             ->orderBy('created_at','incs')
+                             ->get();
+        foreach ($data as $d) {
+            $fromName = DB::table('users')->where('openid',$d->from)->pluck('nickname');
+            $d->fromName = $fromName[0];
+            if ($d->refer != null)
+            {
+                $referName = DB::table('users')->where('openid',$d->refer)->pluck('nickname');
+                $d->referName = $referName[0];
+            }
+        }
+        return $data;
+    }
 }

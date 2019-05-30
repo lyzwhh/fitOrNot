@@ -20,6 +20,6 @@ Route::group(['prefix'  =>  'moment','middleware'   =>  'token'],function (){
 
     Route::post('/comment','MomentController@createComment')->middleware('token');
     Route::delete('/comment/{commentId}','MomentController@deleteComment')->middleware('token');     //为评论的id
-
+    Route::get('/comment/{momentId}','MomentController@getCommentByMoment')->middleware('token');
 
 });

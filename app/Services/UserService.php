@@ -128,6 +128,12 @@ class UserService
         return $data[0];
     }
 
+    public function getConfig($openid)
+    {
+        $data = DB::table('users')->where('openid',$openid)->select('hide_figure')->get();
+        return $data;
+    }
+
 //    public function getIdByOpenid($openid)
 //    {
 //        $id = DB::table('users')->where('openid',$openid)->pluck('id');
