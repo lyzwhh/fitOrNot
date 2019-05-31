@@ -28,7 +28,7 @@ class UserService
         {
             DB::table('users')->where('openid',$userInfo['openid'])->update(['openid'   =>  $userInfo['openid'],
                                                                         'session_key'   =>  $userInfo['session_key']]);
-            $userId = $user['id'];
+            $userId = $user->id;
         }
         return $userId;
     }
