@@ -89,5 +89,61 @@ class ClothesController extends Controller
         ]);
     }
 
+    public function setSuit(Request $request)
+    {
+//        dd($request);
+        $userInfo = $request['user'];
+        $suitInfo = $request['suit'];
+        $this->clothesService->setSuit($suitInfo,$userInfo);
+
+        return response([
+            'errcode'   =>  0
+        ]);
+
+    }
+
+    public function getSuit(Request $request)
+    {
+        $data = $this->clothesService->getSuit($request['user']->openid);
+
+        return response([
+            'errcode'   =>  0,
+            'data'  =>  $data
+        ]);
+    }
+
+    public function deleteSuit($suitId,Request $request)
+    {
+        $userInfo = $request['user'];
+        if ($userInfo->openid != $this->clothesService->getSuitOwner($suitId))
+        {
+            return response([
+                'errcode'   =>  -1,
+                'errmsg'    =>  '非该套装主人'
+            ]);
+        }
+        $this->clothesService->deleteSuit($suitId);
+        return response([
+            'errcode'   =>  0
+        ]);
+    }
+
+    public function wearSuit($suitId,Request $request)
+    {
+        $userInfo = $request['user'];
+//        dd($this->clothesService->getSuitOwner($suitId));
+        if ($userInfo->openid != $this->clothesService->getSuitOwner($suitId))
+        {
+            return response([
+                'errcode'   =>  -1,
+                'errmsg'    =>  '非该套装主人'
+            ]);
+        }
+        $this->clothesService->wearSuit($suitId);
+        return response([
+            'errcode'   =>  0
+        ]);
+
+    }
 
 }
