@@ -83,6 +83,10 @@ class ClothesService
     public function getPrice($id)
     {
         $price = DB::table('clothes')->where('id',$id)->pluck('price');
+        if ($price->isEmpty())
+        {
+            return 0;
+        }
         return $price[0];
     }
 
