@@ -27,7 +27,7 @@ class CreateUsersTable extends Migration
 
             $table->integer('total')->default(0); //衣服数量
             $table->integer('vip')->default(0); // 0 为免费会员
-            $table->integer('hide_figure')->default(0);
+            $table->integer('hide_figure')->default(1);
 
             $table->timestamps();
         });

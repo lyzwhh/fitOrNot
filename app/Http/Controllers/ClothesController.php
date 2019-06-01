@@ -38,7 +38,7 @@ class ClothesController extends Controller
     public function getClothes(Request $request)
     {
         $userInfo = $request['user'];
-        $clothes = $this->clothesService->getClothes($userInfo->openid);
+        $clothes = $this->clothesService->getOrderClothes($userInfo->openid);
 
         return response([
             'errode'  =>  0,

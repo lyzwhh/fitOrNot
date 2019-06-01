@@ -11,6 +11,8 @@ Route::group(['prefix' => 'user'],function (){
     Route::post('/userInfo','UserController@setUserInfo')->middleware('token');
     Route::get('/userInfo','UserController@getUserInfo')->middleware('token');
     Route::get('/othersInfo/{openid}','UserController@getOthersInfo')->middleware('token');
+    Route::post('/setName','UserController@setName')->middleware('token');
+
 
     Route::get('/follow/{openid}','UserController@createFollow')->middleware('token');
     Route::delete('/follow/{openid}','UserController@deleteFollow')->middleware('token');
@@ -20,4 +22,5 @@ Route::group(['prefix' => 'user'],function (){
     Route::get('/getNicknameByOpenid/{openid}','UserController@getNicknameByOpenid')->middleware('token');
 
     Route::get('/getConfig','UserController@getConfig')->middleware('token');
+    Route::get('/setConfig/{choice}','UserController@setConfig')->middleware('token');
 });

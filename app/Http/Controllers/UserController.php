@@ -51,7 +51,7 @@ class UserController extends Controller
         ]);
     }
 
-    public function setUserInfo(Request $request)
+    public function setUserInfo(Request $request)   //figure && signature
     {
         $this->validate($request,[
             'signature' =>  'required'
@@ -66,6 +66,17 @@ class UserController extends Controller
         ]);
 
     }
+
+    public function setName(Request $request)
+    {
+        $userInfo = $request['user'];
+        $data = $request['data'];
+        $this->userService->setName($data,$userInfo->openid);
+        return response([
+            'errcode'   =>  0
+        ]);
+    }
+
 
     public function getUserInfo(Request $request)
     {
@@ -166,6 +177,14 @@ class UserController extends Controller
         return response([
             'errcode'   =>  0,
             'data'  =>  $data
+        ]);
+    }
+
+    public function setConfig($choice,Request $request)
+    {
+        $this->userService->setConfig($request['user']->openid,$choice);
+        return response([
+            'errcode'   =>  0
         ]);
     }
 }

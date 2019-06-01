@@ -33,9 +33,19 @@ class ClothesService
 
     }
 
-    public function getClothes($openid)
+    public function getOrderClothes($openid)
     {
-        $clothes = DB::table('clothes')->where('owner',$openid)->get();
+        $data = array();
+        for ($c=1 ; $c<=4 ; $c++)
+        {
+            $data[$c] = $this->getClothes($openid,$c);
+        }
+        return $data;
+    }
+
+    public function getClothes($openid,$category)
+    {
+        $clothes = DB::table('clothes')->where('owner',$openid)->where('category',$category)->get();
         return $clothes;
     }
 

@@ -50,6 +50,15 @@ class UserService
         ]);
         DB::table('users')->where('openid',$userInfo->openid)->update($data);
     }
+
+    public function setName($data,$openid)
+    {
+        DB::table('users')->where('openid',$openid)->update([
+            'nickname'  =>  $data['nickname'],
+            'avatar_url'    =>  $data['avatar_url']
+        ]);
+    }
+
     public function getUserInfo($userInfo)
     {
         $detail = DB::table('users')->where('openid',$userInfo->openid)->select('phone', 'avatar_url','nickname','height','weight','signature','liked')->first();
@@ -132,6 +141,13 @@ class UserService
     {
         $data = DB::table('users')->where('openid',$openid)->select('hide_figure')->get();
         return $data;
+    }
+
+    public function setConfig($openid,$choice)
+    {
+        DB::table('users')->where('openid',$openid)->update([
+            'hide_figure' => $choice
+        ]);
     }
 
 //    public function getIdByOpenid($openid)
