@@ -47,6 +47,18 @@ class ClothesController extends Controller
         ]);
     }
 
+    public function getClothes2(Request $request)
+    {
+        $userInfo = $request['user'];
+        $clothes = $this->clothesService->getOrderClothes2($userInfo->openid);
+
+        return response([
+            'errode'  =>  0,
+            'flag'  =>  0,
+            'data'  =>  $clothes
+        ]);
+    }
+
     public function updateClothes(Request $request)
     {
         $this->validate($request,[

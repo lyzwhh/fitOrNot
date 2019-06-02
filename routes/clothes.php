@@ -7,6 +7,7 @@
  */
 Route::group(['prefix' => 'clothes','middleware' => 'token'],function (){
     Route::get('clothes','ClothesController@getClothes');
+    Route::get('clothes2','ClothesController@getClothes');      //前端内部吵架的结果
     Route::post('clothes','ClothesController@setClothes');
     Route::put('clothes','ClothesController@updateClothes');
     Route::delete('clothes/{id}','ClothesController@deleteClothes');

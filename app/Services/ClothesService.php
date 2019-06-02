@@ -43,6 +43,17 @@ class ClothesService
         return $data;
     }
 
+    public function getOrderClothes2($openid)       //前端内部吵架的结果
+    {
+        $data = array();
+        for ($c=1 ; $c<=4 ; $c++)
+        {
+            $data[] = $this->getClothes($openid,$c);
+        }
+        return $data;
+    }
+
+
     public function getClothes($openid,$category)
     {
         $clothes = DB::table('clothes')->where('owner',$openid)->where('category',$category)->get();
