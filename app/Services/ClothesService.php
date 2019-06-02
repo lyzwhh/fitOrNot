@@ -10,6 +10,8 @@ namespace App\Services;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Exception;
+use mysql_xdevapi\Collection;
+
 class ClothesService
 {
     public function setClothes($openid,$clothes)
@@ -36,9 +38,15 @@ class ClothesService
     public function getOrderClothes($openid)
     {
         $data = array();
+        $map = [
+            1 =>  'a',
+            2 =>  'b',
+            3 =>  'c',
+            4 =>  'd'
+        ];
         for ($c=1 ; $c<=4 ; $c++)
         {
-            $data[$c] = $this->getClothes($openid,$c);
+            $data[$map[$c]] = $this->getClothes($openid,$c);
         }
         return $data;
     }
