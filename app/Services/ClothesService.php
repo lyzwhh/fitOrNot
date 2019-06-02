@@ -134,6 +134,10 @@ class ClothesService
         {
             $c->pic_url = DB::table('clothes')
                 ->where('id',$c->id)->pluck('pic_url');
+            if ($c->pic_url->isEmpty())
+            {
+                continue;
+            }
             $c->pic_url = $c->pic_url[0];
         }
         return $clothes;

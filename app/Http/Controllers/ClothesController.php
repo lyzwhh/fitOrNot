@@ -42,6 +42,7 @@ class ClothesController extends Controller
 
         return response([
             'errode'  =>  0,
+            'flag'  =>  0,
             'data'  =>  $clothes
         ]);
     }
@@ -108,6 +109,7 @@ class ClothesController extends Controller
 
         return response([
             'errcode'   =>  0,
+            'flag'  =>  1,
             'data'  =>  $data
         ]);
     }
