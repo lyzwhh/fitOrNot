@@ -136,7 +136,7 @@ class ClothesService
                 ->where('id',$c->id)->pluck('pic_url');
             if ($c->pic_url->isEmpty())
             {
-                continue;
+                continue;      //TODO::释放衣服中被删除的衣服
             }
             $c->pic_url = $c->pic_url[0];
         }

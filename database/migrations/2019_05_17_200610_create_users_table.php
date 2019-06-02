@@ -19,9 +19,9 @@ class CreateUsersTable extends Migration
             $table->string('session_key');
             $table->string('phone')->default('未填写');
             $table->string('nickname')->default('未填写');
-            $table->string('height')->default('未填写');
-            $table->string('weight')->default('未填写');
-            $table->string('signature')->default('未填写');
+            $table->string('height')->default('点击填写');
+            $table->string('weight')->default('点击填写');
+            $table->string('signature')->default('点击填写');
             $table->integer('liked')->default(0);
             $table->string('avatar_url')->default('https://cdn.lyzwhh.top/avatar.jpg');
 
