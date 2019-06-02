@@ -43,11 +43,9 @@ class UserService
         $userId = DB::table('users')->insertGetId($userInfo);
         return $userId;
     }
-    public function setUserInfo($userInfo,$figure,$signature)
+    public function setUserInfo($userInfo,$data)
     {
-        $data = array_merge($figure,[
-            'signature' =>  $signature
-        ]);
+
         DB::table('users')->where('openid',$userInfo->openid)->update($data);
     }
 

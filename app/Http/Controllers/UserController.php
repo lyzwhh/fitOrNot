@@ -51,16 +51,19 @@ class UserController extends Controller
         ]);
     }
 
-    public function setUserInfo(Request $request)   //figure && signature
+    public function setUserInfo(Request $request)   //figure && signature  ( && what every in users table
     {
-        $this->validate($request,[
-            'signature' =>  'required'
-        ]);
-        $userInfo = $request->user;
-        $figure = $request['figure'];
-//        return $request->all();
-        $this->userService->setUserInfo($userInfo,$request['figure'],$request['signature']);
+//        $this->validate($request,[
+//            'signature' =>  'required'
+//        ]);
+//        $userInfo = $request->user;
+//        $figure = $request['figure'];
+////        return $request->all();
+//        $this->userService->setUserInfo($userInfo,$request['figure'],$request['signature']);
 
+        $userInfo = $request->user;
+        $data = $request['data'];
+        $this->userService->setUserInfo($userInfo,$data);
         return response([
             'errrcode'  =>  0
         ]);
