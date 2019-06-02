@@ -179,7 +179,7 @@ class UserController extends Controller
         $data = $this->userService->getConfig($request['user']->openid);
         return response([
             'errcode'   =>  0,
-            'data'  =>  $data
+            'data'  =>  $data[0]
         ]);
     }
 
