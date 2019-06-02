@@ -38,7 +38,7 @@ class ClothesService
         $data = array();
         for ($c=1 ; $c<=4 ; $c++)
         {
-            $data[] = $this->getClothes($openid,$c);
+            $data[$c] = $this->getClothes($openid,$c);
         }
         return $data;
     }
