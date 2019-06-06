@@ -16,6 +16,10 @@ class MomentService
 
     public function createMoment($momentInfo)
     {
+        $momentInfo = array_merge($momentInfo,[
+            'created_at'    =>  Carbon::now(),
+            'updated_at'    =>  Carbon::now()
+        ]);
         DB::table('moments')->insert($momentInfo);
     }
 
