@@ -134,7 +134,8 @@ class MomentService
                 'from'  =>  $from,
                 'to'    =>  $to
             ])->delete();
-            DB::table('users')->where('openid',$from)->decrement('liked');
+            DB::table('users')->join('moments','moments.writer','=','users.openid')
+                ->where('moments.id',$to)->decrement('users.liked');
             DB::table('moments')->where('id',$to)->decrement('likes_num');
 
             DB::commit();
