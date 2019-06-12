@@ -43,8 +43,21 @@ class MomentController extends Controller
         ]);
     }
 
-    public function deleteMoment($id)
+    public function deleteMoment($id,Request $request)
     {
+        $userInfo = $request['user'];
+        if ($userInfo->openid != $this->momentService->getMomentOwner($id))
+        {
+            return response([
+                'errcode'   =>  -1,
+                'errmsg'    =>  '非评论主人无法删除'
+            ]);
+        }
+        $this->momentService->deleteMoment($id);
+        return response([
+            'errcode'   =>  0,
+            'errmsg'    =>  '删除完成'
+        ]);
 
     }
 

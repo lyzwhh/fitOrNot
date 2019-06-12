@@ -10,6 +10,7 @@ Route::group(['prefix'  =>  'moment','middleware'   =>  'token'],function (){
     Route::get('moment','MomentController@getMoment');
     Route::get('moment_detail/{id}','MomentController@getMomentDetail');
     Route::get('getonesmoment/{openid}','MomentController@getMomentByOpenid');
+    Route::delete('moment/{id}','MomentController@deleteMoment');
 
 
     Route::get('/like/{id}','MomentController@createLike')->middleware('token');

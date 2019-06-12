@@ -23,6 +23,7 @@ class MomentService
         DB::table('moments')->insert($momentInfo);
     }
 
+    //获取最新所有人的Moment
     public function getNewestMoment()
     {
 //        $momentData = DB::table('moments')->where('status',0)
@@ -43,11 +44,29 @@ class MomentService
         return $momentData;
     }
 
+    // 返回朋友圈的作者的openid
+    public function getMomentOwner($momentId)
+    {
+        $openid = DB::table('moments')->where('id',$momentId)->pluck('writer');
+        if ($openid != null)
+        {
+            return $openid[0];
+        }
+        return null;
+    }
+
+    public function deleteMoment($id)
+    {
+        DB::table('moments')->where('id',$id)->update([
+            'status'    =>  '-1'
+        ]);
+    }
     public function getMomentDetail()
     {
 
     }
 
+    //获取某人所有moment
     public function getMomentByOpenid($openid)
     {
         $momentData = DB::table('moments')->where('status',0)->where('openid',$openid)
