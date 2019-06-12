@@ -97,7 +97,8 @@ class MomentService
                     'created_at'    =>  Carbon::now(),
                     'updated_at'    =>  Carbon::now()
                 ]);
-                DB::table('users')->where('openid',$from)->increment('liked');
+                DB::table('users')->join('moments','moments.writer','=','users.openid')
+                    ->where('moments.id',$to)->increment('users.liked');
                 DB::table('moments')->where('id',$to)->increment('likes_num');
 
                 DB::commit();
