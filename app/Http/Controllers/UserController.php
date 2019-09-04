@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Services\MomentService;
+use App\Services\RedisService;
+use App\Services\SMSService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use App\Services\WxxcxService;
@@ -14,15 +16,18 @@ class UserController extends Controller
     private $tokenService;
     private $userService;
     private $momentService;
+    private $SMSService;
     public function __construct(WxxcxService $wxxcxService,
                                 TokenService $tokenService,
                                 UserService $userService,
-                                MomentService $momentService)
+                                MomentService $momentService,
+                                SMSService $SMSService)
     {
         $this->wxxcxService = $wxxcxService;
         $this->tokenService = $tokenService;
         $this->userService = $userService;
         $this->momentService = $momentService;
+        $this->SMSService = $SMSService;
     }
 
     public function code2session(Request $request)
@@ -193,5 +198,39 @@ class UserController extends Controller
         return response([
             'errcode'   =>  0
         ]);
+    }
+
+    public function getVCode(Request $request)
+    {
+        $this->validate($request,[
+            'phone' =>  [
+                'required',
+                'regex:/^1\d{10}$/'     //手机号不断开放,懒得维护正则
+            ]
+        ]);
+        $phone = $request['phone'];
+        if (RedisService::checkPhoneFreq($phone))
+        {
+            return response([
+                'errcode'   =>  -1,
+                'errmsg'    =>  "请求太快,60s内只能发送一条短信"
+            ]);
+        }
+        if (RedisService::checkCache(RedisService::getPrefix_1().$phone))
+        {
+            $vCode = RedisService::getCache(RedisService::getPrefix_1().$phone);
+            $vCode = json_decode($vCode)->vCode;
+        }
+        else
+        {
+            $vCode = $this->SMSService->createVerificationCode();
+            RedisService::setPhone($phone,$vCode);
+        }
+        $this->SMSService->sendSMS($phone,$vCode);
+
+        return response([
+            'errcode'   =>  0
+        ]);
+
     }
 }

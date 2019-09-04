@@ -23,4 +23,6 @@ Route::group(['prefix' => 'user'],function (){
 
     Route::get('/getConfig','UserController@getConfig')->middleware('token');
     Route::get('/setConfig/{choice}','UserController@setConfig')->middleware('token');
+
+    Route::post('/getVCode','UserController@getVCode');
 });

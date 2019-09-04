@@ -82,9 +82,9 @@ Class WxxcxService
      */
     public function getAccessToken()
     {
-        if($this->redisService->checkCache('accessToken'))
+        if(RedisService::checkCache('fit:accessToken'))
         {
-            return $this->redisService->getCache('accessToken');
+            return RedisService::getCache('fit:accessToken');
         }
         else
         {
@@ -92,7 +92,7 @@ Class WxxcxService
             if(!isset($accessTokenInfo['access_token'])){
                 return -1;                      //TODO:: 接下这个-1
             }
-            $this->redisService->setAccessToken($accessTokenInfo['access_token']);
+            RedisService::setAccessToken($accessTokenInfo['access_token']);
             return $accessTokenInfo['access_token'];
 
         }

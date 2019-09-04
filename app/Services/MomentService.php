@@ -55,7 +55,7 @@ class MomentService
         return null;
     }
 
-    public function deleteMoment($id)
+    public function deleteMoment($id)       //TODO : 微信云里面的图片删除
     {
         DB::table('moments')->where('id',$id)->update([
             'status'    =>  '-1'
