@@ -32,7 +32,7 @@ class MomentService
 //                            ->paginate(24);
 
         $momentData = DB::table('moments')->where('status',0)
-            ->join('users','moments.writer','=','users.openid')
+            ->join('users','moments.writer','=','users.user_id')
             ->select('moments.pics_url','moments.content','moments.likes_num','moments.comments_num',
                     'moments.writer','users.avatar_url','moments.id','users.nickname')
             ->orderBy('moments.created_at', 'desc')
@@ -44,13 +44,13 @@ class MomentService
         return $momentData;
     }
 
-    // 返回朋友圈的作者的openid
+    // 返回朋友圈的作者的user_id
     public function getMomentOwner($momentId)
     {
-        $openid = DB::table('moments')->where('id',$momentId)->pluck('writer');
-        if ($openid != null)
+        $user_id = DB::table('moments')->where('id',$momentId)->pluck('writer');
+        if ($user_id != null)
         {
-            return $openid[0];
+            return $user_id[0];
         }
         return null;
     }
@@ -67,10 +67,10 @@ class MomentService
     }
 
     //获取某人所有moment
-    public function getMomentByOpenid($openid)
+    public function getMomentByUserId($user_id)
     {
-        $momentData = DB::table('moments')->where('status',0)->where('openid',$openid)
-            ->join('users','moments.writer','=','users.openid')
+        $momentData = DB::table('moments')->where('status',0)->where('user_id',$user_id)
+            ->join('users','moments.writer','=','users.user_id')
             ->select('moments.pics_url','moments.content','moments.likes_num','moments.comments_num',
                 'moments.writer','users.avatar_url','moments.id','users.nickname')
             ->orderBy('moments.created_at', 'desc')
@@ -83,7 +83,7 @@ class MomentService
     }
 
 
-    public function createLike($from,$to)    //from 为openid ,to 为moment id
+    public function createLike($from,$to)    //from 为user_id ,to 为moment id
     {
         $flag = $this->checkIfLiked($from,$to);
         if ($flag == 1)
@@ -97,7 +97,7 @@ class MomentService
                     'created_at'    =>  Carbon::now(),
                     'updated_at'    =>  Carbon::now()
                 ]);
-                DB::table('users')->join('moments','moments.writer','=','users.openid')
+                DB::table('users')->join('moments','moments.writer','=','users.user_id')
                     ->where('moments.id',$to)->increment('users.liked');
                 DB::table('moments')->where('id',$to)->increment('likes_num');
 
@@ -125,7 +125,7 @@ class MomentService
 
     }
 
-    public function deleteLike($from,$to)       //from 为openid ,to 为moment id
+    public function deleteLike($from,$to)       //from 为user_id ,to 为moment id
     {
         DB::beginTransaction();
         try {
@@ -134,7 +134,7 @@ class MomentService
                 'from'  =>  $from,
                 'to'    =>  $to
             ])->delete();
-            DB::table('users')->join('moments','moments.writer','=','users.openid')
+            DB::table('users')->join('moments','moments.writer','=','users.user_id')
                 ->where('moments.id',$to)->decrement('users.liked');
             DB::table('moments')->where('id',$to)->decrement('likes_num');
 
@@ -163,13 +163,14 @@ class MomentService
         }
     }
 
-    // 返回评论的作者的openid
+    // 返回评论的作者的user_id,用于判断是否为评论主人
     public function getCommentOwner($commentId)
     {
-        $openid = DB::table('comments')->where('id',$commentId)->pluck('from');
-        if ($openid != null)
+        $user_id = DB::table('comments')->where('id',$commentId)->pluck('from');
+//        return $user_id;
+        if ($user_id->isNotEmpty())
         {
-            return $openid[0];
+            return $user_id[0];
         }
         return null;
     }
@@ -197,11 +198,11 @@ class MomentService
                              ->orderBy('created_at','asc')
                              ->get();
         foreach ($data as $d) {
-            $fromName = DB::table('users')->where('openid',$d->from)->pluck('nickname');
+            $fromName = DB::table('users')->where('user_id',$d->from)->pluck('nickname');
             $d->fromName = $fromName[0];
             if ($d->refer != null)
             {
-                $referName = DB::table('users')->where('openid',$d->refer)->pluck('nickname');
+                $referName = DB::table('users')->where('user_id',$d->refer)->pluck('nickname');
                 $d->referName = $referName[0];
             }
         }

@@ -44,6 +44,7 @@ class UserController extends Controller
             'errcode'  =>  0,
             'data'  =>  [
                 'token' =>  $token,
+                'user_id'   =>  $userId,
                 'openid'   =>  $userInfo['openid'],
                 'session_key'   =>  $userInfo['session_key']
             ]
@@ -63,6 +64,9 @@ class UserController extends Controller
 
         $userInfo = $request->user;
         $data = $request['data'];
+//        return response([
+//            'data'  =>  $data
+//        ]);
         $this->userService->setUserInfo($userInfo,$data);
         return response([
             'errrcode'  =>  0
@@ -74,7 +78,7 @@ class UserController extends Controller
     {
         $userInfo = $request['user'];
         $data = $request['data'];
-        $this->userService->setName($data,$userInfo->openid);
+        $this->userService->setName($data,$userInfo->user_id);
         return response([
             'errcode'   =>  0
         ]);
@@ -90,10 +94,10 @@ class UserController extends Controller
             'data'  =>  $detail
         ]);
     }
-    public function getOthersInfo($openid)
+    public function getOthersInfo($user_id)
     {
-        $detail = $this->userService->getOthersInfo($openid);
-        $moment = $this->momentService->getMomentByOpenid($openid);
+        $detail = $this->userService->getOthersInfo($user_id);
+        $moment = $this->momentService->getMomentByUserId($user_id);
         $data = array();
         $data['userInfo'] = $detail;
         $data['moment'] = $moment;
@@ -103,9 +107,9 @@ class UserController extends Controller
         ]);
     }
 
-    public function createFollow($openid,Request $request)
+    public function createFollow($user_id,Request $request)
     {
-        $flag = $this->userService->createFollow($request['user']->openid,$openid);
+        $flag = $this->userService->createFollow($request['user']->user_id,$user_id);
         if ($flag == 1)
         {
             return response([
@@ -130,18 +134,18 @@ class UserController extends Controller
 
     }
 
-    public function deleteFollow($openid,Request $request)
+    public function deleteFollow($user_id,Request $request)
     {
-        $this->userService->deleteFollow($request['user']->openid,$openid);
+        $this->userService->deleteFollow($request['user']->user_id,$user_id);
         return response([
             'errcode'   =>  '0',
             'errmsg'    =>  '取消关注成功'
         ]);
     }
 
-    public function checkIfFollowed($openid,Request $request)
+    public function checkIfFollowed($user_id,Request $request)
     {
-        $result = $this->userService->checkIfFollowed($request['user']->openid,$openid);
+        $result = $this->userService->checkIfFollowed($request['user']->user_id,$user_id);
         if ($result == 1)
         {
             return response([
@@ -158,16 +162,16 @@ class UserController extends Controller
 
     public function getAllFollowed(Request $request)
     {
-        $data = $this->userService->getAllFollowed($request['user']->openid);
+        $data = $this->userService->getAllFollowed($request['user']->user_id);
         return response([
             'errcode'   =>  0,
             'data'  =>$data
         ]);
     }
 
-    public function getNicknameByOpenid($openid)
+    public function getNicknameByUserId($user_id)
     {
-        $data = $this->userService->getNicknameByOpenid($openid);
+        $data = $this->userService->getNicknameByUserId($user_id);
         return response([
             'errcode'   =>0,
             'data'      =>$data
@@ -176,7 +180,7 @@ class UserController extends Controller
 
     public function getConfig(Request $request)
     {
-        $data = $this->userService->getConfig($request['user']->openid);
+        $data = $this->userService->getConfig($request['user']->user_id);
         return response([
             'errcode'   =>  0,
             'data'  =>  $data[0]
@@ -185,7 +189,7 @@ class UserController extends Controller
 
     public function setConfig($choice,Request $request)
     {
-        $this->userService->setConfig($request['user']->openid,$choice);
+        $this->userService->setConfig($request['user']->user_id,$choice);
         return response([
             'errcode'   =>  0
         ]);

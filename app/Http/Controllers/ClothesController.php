@@ -27,7 +27,7 @@ class ClothesController extends Controller
         $userInfo = $clothesInfo['user'];
         foreach ($clothesInfo['clothes'] as $clothes)
         {
-            $this->clothesService->setClothes($userInfo->openid,$clothes);
+            $this->clothesService->setClothes($userInfo->user_id,$clothes);
         }
 
         return response([
@@ -38,7 +38,7 @@ class ClothesController extends Controller
     public function getClothes(Request $request)
     {
         $userInfo = $request['user'];
-        $clothes = $this->clothesService->getOrderClothes($userInfo->openid);
+        $clothes = $this->clothesService->getOrderClothes($userInfo->user_id);
 
         return response([
             'errode'  =>  0,
@@ -50,7 +50,7 @@ class ClothesController extends Controller
     public function getClothes2(Request $request)
     {
         $userInfo = $request['user'];
-        $clothes = $this->clothesService->getOrderClothes2($userInfo->openid);
+        $clothes = $this->clothesService->getOrderClothes2($userInfo->user_id);
 
         return response([
             'errode'  =>  0,
@@ -68,7 +68,7 @@ class ClothesController extends Controller
         $clothesInfo = $request['clothes'];
         foreach ($clothesInfo as $clothes)
         {
-            if ($this->clothesService->updateClothes($clothes,$userInfo->openid) == -1)
+            if ($this->clothesService->updateClothes($clothes,$userInfo->user_id) == -1)
             {
                 return response([
                     'errcode'  =>  -1,
@@ -85,7 +85,7 @@ class ClothesController extends Controller
     public function deleteClothes($id,Request $request)
     {
         $userInfo = $request['user'];
-        if ($this->clothesService->checkOwner($id,$userInfo->openid) != 0)
+        if ($this->clothesService->checkOwner($id,$userInfo->user_id) != 0)
         {
             return response([
                 'errcode'  =>  -1,
@@ -117,7 +117,7 @@ class ClothesController extends Controller
 
     public function getSuit(Request $request)
     {
-        $data = $this->clothesService->getSuit($request['user']->openid);
+        $data = $this->clothesService->getSuit($request['user']->user_id);
 
         return response([
             'errcode'   =>  0,
@@ -129,7 +129,7 @@ class ClothesController extends Controller
     public function deleteSuit($suitId,Request $request)
     {
         $userInfo = $request['user'];
-        if ($userInfo->openid != $this->clothesService->getSuitOwner($suitId))
+        if ($userInfo->user_id != $this->clothesService->getSuitOwner($suitId))
         {
             return response([
                 'errcode'   =>  -1,
@@ -146,7 +146,7 @@ class ClothesController extends Controller
     {
         $userInfo = $request['user'];
 //        dd($this->clothesService->getSuitOwner($suitId));
-        if ($userInfo->openid != $this->clothesService->getSuitOwner($suitId))
+        if ($userInfo->user_id != $this->clothesService->getSuitOwner($suitId))
         {
             return response([
                 'errcode'   =>  -1,

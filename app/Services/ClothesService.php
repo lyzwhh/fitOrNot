@@ -14,10 +14,10 @@ use mysql_xdevapi\Collection;
 
 class ClothesService
 {
-    public function setClothes($openid,$clothes)
+    public function setClothes($user_id,$clothes)
     {
         $now = Carbon::now();
-        $clothes['owner'] = $openid;
+        $clothes['owner'] = $user_id;
         $clothes['created_at'] = $now;
         $clothes['updated_at'] = $now;
 
@@ -35,7 +35,7 @@ class ClothesService
 
     }
 
-    public function getOrderClothes($openid)
+    public function getOrderClothes($user_id)
     {
         $data = array();
         $map = [
@@ -46,25 +46,25 @@ class ClothesService
         ];
         for ($c=1 ; $c<=4 ; $c++)
         {
-            $data[$map[$c]] = $this->getClothes($openid,$c);
+            $data[$map[$c]] = $this->getClothes($user_id,$c);
         }
         return $data;
     }
 
-    public function getOrderClothes2($openid)       //前端内部吵架的结果
+    public function getOrderClothes2($user_id)       //前端内部吵架的结果
     {
         $data = array();
         for ($c=1 ; $c<=4 ; $c++)
         {
-            $data[] = $this->getClothes($openid,$c);
+            $data[] = $this->getClothes($user_id,$c);
         }
         return $data;
     }
 
 
-    public function getClothes($openid,$category)
+    public function getClothes($user_id,$category)
     {
-        $clothes = DB::table('clothes')->where('owner',$openid)->where('category',$category)->get();
+        $clothes = DB::table('clothes')->where('owner',$user_id)->where('category',$category)->get();
         return $clothes;
     }
 
@@ -130,15 +130,15 @@ class ClothesService
         DB::table('suits')->insert([
             'total_price'   =>  $totalPrice,
             'clothes'   =>  $suitInfo,
-            'owner' =>  $userInfo->openid,
+            'owner' =>  $userInfo->user_id,
             'created_at'    =>  Carbon::now(),
             'updated_at'    =>  Carbon::now()
         ]);
     }
 
-    public function getSuit($openid)
+    public function getSuit($user_id)
     {
-        $suits = DB::table('suits')->where('owner',$openid)->get();
+        $suits = DB::table('suits')->where('owner',$user_id)->get();
         foreach ($suits as $suit)           //多条套装记录
         {
             $suit->clothes = json_decode($suit->clothes);
@@ -202,11 +202,5 @@ class ClothesService
             DB::rollBack();
         }
     }
-
-//    public function checkFree($openid)
-//    {
-//        $total = DB::table('users')->where('openid',$openid)->pluck('total');
-//        if ($total > )
-//    }
 
 }

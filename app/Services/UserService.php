@@ -16,9 +16,10 @@ class UserService
 
     }
 
-    public function updateUser($userInfo)  //有则调用更新,没有就创建,因为会更新session_key
+    public function updateUser($userInfo)  //微信用——有则调用更新,没有就创建,因为会更新session_key
     {
-        $user = DB::table('users')->where('openid',$userInfo['openid'])->first();
+        $user = DB::table('users')->where('openid',$userInfo['openid'])->first();   //这里就是用openid，不用user_id
+                                                    //code2session只返回openid，用这个判断是否已经存在
         if($user == null)
         {
             $userId = $this->createUser(['openid'   =>  $userInfo['openid'],
@@ -28,7 +29,7 @@ class UserService
         {
             DB::table('users')->where('openid',$userInfo['openid'])->update(['openid'   =>  $userInfo['openid'],
                                                                         'session_key'   =>  $userInfo['session_key']]);
-            $userId = $user->id;
+            $userId = $user->user_id;
         }
         return $userId;
     }
@@ -46,34 +47,34 @@ class UserService
     public function setUserInfo($userInfo,$data)
     {
 
-        DB::table('users')->where('openid',$userInfo->openid)->update($data);
+        DB::table('users')->where('user_id',$userInfo->user_id)->update($data);
     }
 
-    public function setName($data,$openid)
+    public function setName($data,$user_id)
     {
-        DB::table('users')->where('openid',$openid)->update([
+        DB::table('users')->where('user_id',$user_id)->update([
             'nickname'  =>  $data['nickname'],
             'avatar_url'    =>  $data['avatar_url']
         ]);
     }
 
-    public function getUserInfo($userInfo)
+    public function getUserInfo($userInfo)      //获取自己身材等信息
     {
-        $detail = DB::table('users')->where('openid',$userInfo->openid)->select('phone', 'avatar_url','nickname','height','weight','signature','liked')->first();
+        $detail = DB::table('users')->where('user_id',$userInfo->user_id)->select('phone', 'avatar_url','nickname','height','weight','signature','liked')->first();
         return $detail;
     }
 
-    public function getOthersInfo($openid)
+    public function getOthersInfo($user_id)      //获取他人的身材等信息
     {
-        $hide = DB::table('users')->where('openid',$openid)->pluck('hide_figure');
+        $hide = DB::table('users')->where('user_id',$user_id)->pluck('hide_figure');
 //        return $hide[0];
         if ($hide[0] == 1)         //隐藏
         {
-            $detail = DB::table('users')->where('openid',$openid)->select('avatar_url','nickname','openid','signature','liked')->first();
+            $detail = DB::table('users')->where('user_id',$user_id)->select('avatar_url','nickname','openid','signature','liked')->first();
         }
         else                    //显示
         {
-            $detail = DB::table('users')->where('openid',$openid)->select('avatar_url','nickname','openid','weight','height','signature','liked')->first();
+            $detail = DB::table('users')->where('user_id',$user_id)->select('avatar_url','nickname','openid','weight','height','signature','liked')->first();
         }
 
         return $detail;
@@ -119,31 +120,31 @@ class UserService
         return ($data == null);   //没关注返回1
     }
 
-    public function getAllFollowed($openid)
+    public function getAllFollowed($user_id)
     {
         $data = DB::table('follows')->where([
-            'from'  =>  $openid
+            'from'  =>  $user_id
         ])  ->select('to')
             ->orderBy('created_at', 'desc')
             ->paginate(30);
         return $data;
     }
 
-    public function getNicknameByOpenid($openid)
+    public function getNicknameByUserId($user_id)
     {
-        $data = DB::table('users')->where('openid',$openid)->pluck('nickname');
+        $data = DB::table('users')->where('user_id',$user_id)->pluck('nickname');
         return $data[0];
     }
 
-    public function getConfig($openid)
+    public function getConfig($user_id)
     {
-        $data = DB::table('users')->where('openid',$openid)->select('hide_figure')->get();
+        $data = DB::table('users')->where('user_id',$user_id)->select('hide_figure')->get();
         return $data;
     }
 
-    public function setConfig($openid,$choice)
+    public function setConfig($user_id,$choice)
     {
-        DB::table('users')->where('openid',$openid)->update([
+        DB::table('users')->where('user_id',$user_id)->update([
             'hide_figure' => $choice
         ]);
     }

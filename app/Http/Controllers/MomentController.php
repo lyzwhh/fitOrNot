@@ -24,7 +24,7 @@ class MomentController extends Controller
         ]);
         $momentInfo['pics_url'] = json_encode($request['pics_url']);
         $momentInfo['content'] = $request['content'];
-        $momentInfo['writer'] = $request['user']->openid;
+        $momentInfo['writer'] = $request['user']->user_id;
 
         $this->momentService->createMoment($momentInfo);
         return response([
@@ -46,7 +46,7 @@ class MomentController extends Controller
     public function deleteMoment($id,Request $request)
     {
         $userInfo = $request['user'];
-        if ($userInfo->openid != $this->momentService->getMomentOwner($id))
+        if ($userInfo->user_id != $this->momentService->getMomentOwner($id))
         {
             return response([
                 'errcode'   =>  -1,
@@ -66,9 +66,9 @@ class MomentController extends Controller
 
     }
 
-    public function getMomentByOpenid($openid)
+    public function getMomentByUserId($user_id)
     {
-        $data = $this->momentService->getMomentByOpenid($openid);
+        $data = $this->momentService->getMomentByUserId($user_id);
         return response([
             'errcode'   =>  0,
             'data'  =>  $data
@@ -77,7 +77,7 @@ class MomentController extends Controller
 
     public function createLike($id,Request $request)        //id为moment的id
     {
-        $result = $this->momentService->createLike($request['user']->openid,$id);
+        $result = $this->momentService->createLike($request['user']->user_id,$id);
         if($result == 1)
         {
             return response([
@@ -95,7 +95,7 @@ class MomentController extends Controller
 
     public function deleteLike($id,Request $request)
     {
-        $this->momentService->deleteLike($request['user']->openid,$id);
+        $this->momentService->deleteLike($request['user']->user_id,$id);
         return response([
             'errcode'   =>  0
         ]);
@@ -103,7 +103,7 @@ class MomentController extends Controller
 
     public function checkIfLiked($id,Request $request)
     {
-        $result = $this->momentService->checkIfLiked($request['user']->openid,$id);
+        $result = $this->momentService->checkIfLiked($request['user']->user_id,$id);
 
         if ($result == 1)
         {
@@ -126,7 +126,7 @@ class MomentController extends Controller
             'comment.to'    =>  'required'
         ]);
         $commentInfo = $request['comment'];
-        $commentInfo['from'] = $request['user']->openid;
+        $commentInfo['from'] = $request['user']->user_id;
         $this->momentService->createComment($commentInfo);
         return response([
             'errcode'   =>  0
@@ -138,7 +138,11 @@ class MomentController extends Controller
     public function deleteComment($commentId,Request $request)
     {
         $userInfo = $request['user'];
-        if ($userInfo->openid != $this->momentService->getCommentOwner($commentId))
+//        return response([
+//            "data"  =>  collect([]) == null
+//            ]
+//        );
+        if ($userInfo->user_id != $this->momentService->getCommentOwner($commentId) && $userInfo->user_id != null)
         {
             return response([
                 'errcode'  =>  -1,

@@ -18,5 +18,11 @@ class UsersTableSeeder extends Seeder
             'created_at'    =>  \Carbon\Carbon::now(),
             'updated_at'    =>  \Carbon\Carbon::now()
         ]);
+        DB::table('users')->insert([
+            'openid'    =>  'o9i844xpeqNEzTN97J3cAzUN369A',
+            'session_key'   =>  'KHG3aDWMctCRXXajUhIcgg==',
+            'created_at'    =>  \Carbon\Carbon::now(),
+            'updated_at'    =>  \Carbon\Carbon::now()
+        ]);
     }
 }
