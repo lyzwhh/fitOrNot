@@ -16,7 +16,7 @@ class UserService
 
     }
 
-    public function updateUser($userInfo)  //微信用——有则调用更新,没有就创建,因为会更新session_key
+    public function updateUser($userInfo)  //  微信用    ——    有则调用更新,没有就创建,因为会更新session_key
     {
         $user = DB::table('users')->where('openid',$userInfo['openid'])->first();   //这里就是用openid，不用user_id
                                                     //code2session只返回openid，用这个判断是否已经存在
@@ -149,16 +149,10 @@ class UserService
         ]);
     }
 
-//    public function getIdByOpenid($openid)
-//    {
-//        $id = DB::table('users')->where('openid',$openid)->pluck('id');
-//        return $id;
-//    }
-//
-//    public function getOpenidById($id)
-//    {
-//        $openid = DB::table('users')->where('id',$id)->pluck('openid');
-//        return $openid;
-//    }
+    public function getUserByPhone($phone)
+    {
+        $user = DB::table('users')->where('phone',$phone)->first();
+        return $user;
+    }
 
 }

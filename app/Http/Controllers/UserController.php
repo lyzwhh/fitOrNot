@@ -209,6 +209,13 @@ class UserController extends Controller
             ]
         ]);
         $phone = $request['phone'];
+        if ($this->userService->getUserByPhone($phone) != null)
+        {
+            return response([
+                'errcode'   =>  -1,
+                'errmsg'    =>  '该手机号已经注册'
+            ]);
+        }
         if (RedisService::checkPhoneFreq($phone))
         {
             return response([
@@ -232,5 +239,50 @@ class UserController extends Controller
             'errcode'   =>  0
         ]);
 
+    }
+
+    public function registerByVCode(Request $request)
+    {
+        $this->validate($request,[
+            'phone' =>  [
+                'required',
+                'regex:/^1\d{10}$/'     //手机号不断开放,懒得维护正则
+            ],
+            'VCode' =>  [
+                'required'
+            ]
+        ]);
+        $phone = $request['phone'];
+        $VCode = $request['VCode'];
+
+        if ($this->userService->getUserByPhone($phone) != null)
+        {
+            return response([
+                'errcode'   =>  -1,
+                'errmsg'    =>  '该手机号已经注册'
+            ]);
+        }
+
+        if (!RedisService::checkVCode($phone,$VCode))
+        {
+            return response([
+                'errcode'   =>  -1,
+                'errmsg'    =>  '验证码错误'
+            ]);
+        }
+
+        $userInfo = [
+            'phone' => $phone
+        ];
+
+        $user_id = $this->userService->createUser($userInfo);
+
+        return response([
+            'errcode'   =>  0,
+            'errmsg'    =>  '注册成功',
+            'data'  =>  [
+                'user_id'   =>  $user_id
+            ]
+        ]);
     }
 }

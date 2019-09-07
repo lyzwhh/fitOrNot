@@ -56,5 +56,17 @@ Class RedisService
         return false;
     }
 
+    public static function checkVCode($phone,$VCode)
+    {
+        if (!self::checkCache(self::$PREFIX_1.$phone)) {
+            return false;
+        }
+        if($VCode == json_decode(self::getCache(self::$PREFIX_1.$phone))->vCode)
+        {
+            return true;
+        }
+        return false;
+    }
+
 
 }

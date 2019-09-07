@@ -25,4 +25,5 @@ Route::group(['prefix' => 'user'],function (){
     Route::get('/setConfig/{choice}','UserController@setConfig')->middleware('token');
 
     Route::post('/getVCode','UserController@getVCode');
+    Route::post('/registerByVCode','UserController@registerByVCode');
 });
