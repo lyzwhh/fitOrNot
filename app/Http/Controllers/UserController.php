@@ -276,12 +276,13 @@ class UserController extends Controller
         ];
 
         $user_id = $this->userService->createUser($userInfo);
-
+        $token = $this->tokenService->makeToken($user_id);
         return response([
             'errcode'   =>  0,
             'errmsg'    =>  '注册成功',
             'data'  =>  [
-                'user_id'   =>  $user_id
+                'user_id'   =>  $user_id,
+                'token'     =>  $token
             ]
         ]);
     }
