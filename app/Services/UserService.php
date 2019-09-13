@@ -34,6 +34,20 @@ class UserService
         return $userId;
     }
 
+    public function updatePhoneUser($userInfo)  //  手机号登录用    ——    有则调用更新,没有就创建
+    {
+        $user = DB::table('users')->where('phone',$userInfo['phone'])->first();
+        if($user == null)
+        {
+            $userId = $this->createUser($userInfo);
+        }
+        else
+        {
+            $userId = $user->user_id;
+        }
+        return $userId;
+    }
+
     public function createUser($userInfo)
     {
         $time = new Carbon();
@@ -60,7 +74,12 @@ class UserService
 
     public function getUserInfo($userInfo)      //获取自己身材等信息
     {
-        $detail = DB::table('users')->where('user_id',$userInfo->user_id)->select('phone', 'avatar_url','nickname','height','weight','signature','liked')->first();
+        $detail = DB::table('users')->where('user_id',$userInfo->user_id)
+                                    ->select('user_id','phone', 'avatar_url','nickname','height','weight','signature','liked','birth_year as age')->first();
+        if ($detail->age > 0)
+        {
+            $detail->age = Carbon::now()->year - $detail->age;      //  year to age
+        }
         return $detail;
     }
 
@@ -70,11 +89,16 @@ class UserService
 //        return $hide[0];
         if ($hide[0] == 1)         //隐藏
         {
-            $detail = DB::table('users')->where('user_id',$user_id)->select('avatar_url','nickname','openid','signature','liked')->first();
+            $detail = DB::table('users')->where('user_id',$user_id)->select('user_id','avatar_url','nickname','openid','signature','liked','birth_year as age')->first();
         }
         else                    //显示
         {
-            $detail = DB::table('users')->where('user_id',$user_id)->select('avatar_url','nickname','openid','weight','height','signature','liked')->first();
+            $detail = DB::table('users')->where('user_id',$user_id)->select('user_id','avatar_url','nickname','openid','weight','height','signature','liked','birth_year as age')->first();
+        }
+
+        if ($detail->age > 0)
+        {
+            $detail->age = Carbon::now()->year - $detail->age;  //  year to age
         }
 
         return $detail;

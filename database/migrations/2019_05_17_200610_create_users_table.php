@@ -19,6 +19,7 @@ class CreateUsersTable extends Migration
             $table->string('session_key')->nullable();
             $table->string('phone')->default('未填写');
             $table->string('nickname')->default('未填写');
+            $table->string('birth_year')->default('点击填写');      //注意和前端的输入输出皆为年龄 , 转换代码用"age to year" "year to age"全局搜索
             $table->string('height')->default('点击填写');
             $table->string('weight')->default('点击填写');
             $table->string('signature')->default('点击填写');

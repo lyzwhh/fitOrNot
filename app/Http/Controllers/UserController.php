@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use App\Services\MomentService;
 use App\Services\RedisService;
 use App\Services\SMSService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use App\Services\WxxcxService;
 use App\Services\TokenService;
 use App\Services\UserService;
-class UserController extends Controller
+
+use Illuminate\Support\Facades\Validator;class UserController extends Controller
 {
     private $wxxcxService;
     private $tokenService;
@@ -59,20 +61,45 @@ class UserController extends Controller
 
     public function setUserInfo(Request $request)   //figure && signature  ( && what every in users table
     {
-//        $this->validate($request,[
-//            'signature' =>  'required'
-//        ]);
-//        $userInfo = $request->user;
-//        $figure = $request['figure'];
-////        return $request->all();
-//        $this->userService->setUserInfo($userInfo,$request['figure'],$request['signature']);
+        $rules = [
+            'height' =>  'sometimes|required|integer|between:0,280',
+            'weight' =>  'sometimes|required|integer|between:0,200',
+            'hide_figure'   =>  'sometimes|boolean',
+            'age'    =>  'sometimes|integer|between:0,150',
+            'nickname'  =>  'sometimes',
+            'signature' =>  'sometimes',
+            'avatar_url'    =>  'sometimes',
+
+        ];
+        $data = $request['data'];
+        $validator = Validator::make($data,$rules);
+        if ($validator->fails())
+        {
+            return response([
+                'errcode'   =>  -1,
+                'errmsg'    =>  $validator->errors()
+            ]);
+        }
 
         $userInfo = $request->user;
-        $data = $request['data'];
-//        return response([
-//            'data'  =>  $data
-//        ]);
-        $this->userService->setUserInfo($userInfo,$data);
+        $setData = [];
+
+        foreach ($rules as $key => $rule)   //筛取有用信息 , 防止修改phone等信息
+        {
+            if (isset($data[$key]))
+            {
+                if ($key == 'age')
+                {
+                    $setData['birth_year']  = Carbon::now()->year-$data[$key];      // age to year
+                }
+                else
+                {
+                    $setData[$key] = $data[$key];
+                }
+            }
+        }
+
+        $this->userService->setUserInfo($userInfo,$setData);
         return response([
             'errrcode'  =>  0
         ]);
@@ -209,13 +236,13 @@ class UserController extends Controller
             ]
         ]);
         $phone = $request['phone'];
-        if ($this->userService->getUserByPhone($phone) != null)
-        {
-            return response([
-                'errcode'   =>  -1,
-                'errmsg'    =>  '该手机号已经注册'
-            ]);
-        }
+//        if ($this->userService->getUserByPhone($phone) != null)
+//        {
+//            return response([
+//                'errcode'   =>  -1,
+//                'errmsg'    =>  '该手机号已经注册'
+//            ]);
+//        }
         if (RedisService::checkPhoneFreq($phone))
         {
             return response([
@@ -241,7 +268,7 @@ class UserController extends Controller
 
     }
 
-    public function registerByVCode(Request $request)
+    public function registerByVCode(Request $request)   //叫做注册 , 但也登录
     {
         $this->validate($request,[
             'phone' =>  [
@@ -255,13 +282,13 @@ class UserController extends Controller
         $phone = $request['phone'];
         $VCode = $request['VCode'];
 
-        if ($this->userService->getUserByPhone($phone) != null)
-        {
-            return response([
-                'errcode'   =>  -1,
-                'errmsg'    =>  '该手机号已经注册'
-            ]);
-        }
+//        if ($this->userService->getUserByPhone($phone) != null) // 防止一个验证码注册多个账号用 , 因登录失效
+//        {
+//            return response([
+//                'errcode'   =>  -1,
+//                'errmsg'    =>  '该手机号已经注册'
+//            ]);
+//        }
 
         if (!RedisService::checkVCode($phone,$VCode))
         {
@@ -275,11 +302,13 @@ class UserController extends Controller
             'phone' => $phone
         ];
 
-        $user_id = $this->userService->createUser($userInfo);
+        $user_id = $this->userService->updatePhoneUser($userInfo);
         $token = $this->tokenService->makeToken($user_id);
+
+        RedisService::delVCode($phone);         //todo 删除后checkPhoneFreq 失效 , 可通过发短信 - 登录 - 发短信 - 登录 . 快速发短信 . throttle中间件限流
+
         return response([
             'errcode'   =>  0,
-            'errmsg'    =>  '注册成功',
             'data'  =>  [
                 'user_id'   =>  $user_id,
                 'token'     =>  $token

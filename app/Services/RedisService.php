@@ -12,16 +12,19 @@ Class RedisService
 {
     private static $PREFIX_1 = 'fit:phone:';
 
+    public static function getPrefix_1()
+    {
+        return self::$PREFIX_1;
+    }
     public static function getCache($key)
     {
         return Redis::get($key);
     }
 
-    public static function getPrefix_1()
+    public static function delCache($key)
     {
-        return self::$PREFIX_1;
+        return Redis::del($key);
     }
-
     public static function checkCache($key)
     {
         return Redis::exists($key) == 1;
@@ -66,6 +69,11 @@ Class RedisService
             return true;
         }
         return false;
+    }
+
+    public static function delVCode($phone)
+    {
+        self::delCache(self::$PREFIX_1.$phone);
     }
 
 
