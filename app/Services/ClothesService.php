@@ -26,7 +26,7 @@ class ClothesService
         try {
 
             DB::table('clothes')->insertGetId($clothes);
-            DB::table('users')->increment('total');
+            DB::table('users')->where('user_id',$user_id)->increment('total');
             DB::commit();
         } catch ( Exception $e){
 //            echo $e->getMessage();
@@ -70,7 +70,7 @@ class ClothesService
 
     public function updateClothes($clothes,$owner)
     {
-        if($this->checkOwner($clothes['id'],$owner) == -1)
+        if($this->getOwner($clothes['id']) != $owner)
         {
             return -1;
         }
@@ -81,26 +81,20 @@ class ClothesService
         }
     }
 
-    public function checkOwner($clothesId,$owner)
+    public function getOwner($clothesId)
     {
         $clothes = DB::table('clothes')->where('id',$clothesId)->first();
-        if ($clothes != null && $clothes->owner != $owner)
-        {
-            return -1;
-        }
-        else
-        {
-            return 0;
-        }
+        return $clothes->owner ?? -1;       //不存在user_id为-1的用户
+
     }
 
-    public function deleteClothes($id)
+    public function deleteClothes($id,$user_id)
     {
 
         DB::beginTransaction();
         try {
             DB::table('clothes')->where('id',$id)->delete();
-            DB::table('users')->decrement('total');
+            DB::table('users')->where('user_id',$user_id)->decrement('total');
             DB::commit();
         } catch ( Exception $e){
             echo $e->getMessage();
