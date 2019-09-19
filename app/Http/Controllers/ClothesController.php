@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\ClothesService;
 use App\Services\WxxcxService;
 use Illuminate\Http\Request;
+use App\Tools\ValidatorHelper;
 
 class ClothesController extends Controller
 {
@@ -20,43 +21,57 @@ class ClothesController extends Controller
 
     public function setClothes(Request $request)
     {
-        $this->validate($request,[
-            'clothes.*.pic_url' =>  'required'
-        ]);
-        $clothesInfo = $request->all();
-        $userInfo = $clothesInfo['user'];
-        foreach ($clothesInfo['clothes'] as $clothes)
-        {
-            $this->clothesService->setClothes($userInfo->user_id,$clothes);
-        }
-
+//        $this->validate($request,[
+//            'clothes.*.pic_url' =>  'required'
+//        ]);
+//        $clothesInfo = $request->all();
+//        $userInfo = $clothesInfo['user'];
+//        foreach ($clothesInfo['clothes'] as $clothes)
+//        {
+//            $this->clothesService->setClothes($userInfo->user_id,$clothes);
+//        }
+        $rules = [
+            'pic_url'   =>  'required',
+            'category'  =>  'required',
+            'brand'     =>  'sometimes',
+            'color'     =>  'sometimes',
+            'tags'      =>  'sometimes',
+            'remarks'   =>  'sometimes'
+        ];
+        $setData = ValidatorHelper::checkAndGet($request['clothes'],$rules);
+        $this->clothesService->setClothes($request['user']->user_id,$setData);
         return response([
             'errcode'  =>  0
         ]);
     }
 
-    public function getClothes(Request $request)
+//    public function getClothes(Request $request)  //小程序用1
+//    {
+//        $userInfo = $request['user'];
+//        $clothes = $this->clothesService->getOrderClothes($userInfo->user_id);
+//
+//        return response([
+//            'errode'  =>  0,
+//            'flag'  =>  0,      //小程序端要求 , flag为1时代表返回的是套装 , 0 为单品
+//            'data'  =>  $clothes
+//        ]);
+//    }
+//
+//    public function getClothes2(Request $request)   //小程序用2
+//    {
+//        $userInfo = $request['user'];
+//        $clothes = $this->clothesService->getOrderClothes2($userInfo->user_id);
+//
+//        return response([
+//            'errode'  =>  0,
+//            'flag'  =>  0,
+//            'data'  =>  $clothes
+//        ]);
+//    }
+    public function getClothes(Request $request)    //app用
     {
         $userInfo = $request['user'];
-        $clothes = $this->clothesService->getOrderClothes($userInfo->user_id);
-
-        return response([
-            'errode'  =>  0,
-            'flag'  =>  0,
-            'data'  =>  $clothes
-        ]);
-    }
-
-    public function getClothes2(Request $request)
-    {
-        $userInfo = $request['user'];
-        $clothes = $this->clothesService->getOrderClothes2($userInfo->user_id);
-
-        return response([
-            'errode'  =>  0,
-            'flag'  =>  0,
-            'data'  =>  $clothes
-        ]);
+        $clothes = $this->clothesService->getAllClothes();
     }
 
     public function updateClothes(Request $request)

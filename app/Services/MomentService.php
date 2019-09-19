@@ -44,7 +44,7 @@ class MomentService
         return $momentData;
     }
 
-    // 返回朋友圈的作者的user_id
+    // 返回朋友圈的作者的user_id , 用于删除朋友圈
     public function getMomentOwner($momentId)
     {
         $user_id = DB::table('moments')->where('id',$momentId)->pluck('writer');

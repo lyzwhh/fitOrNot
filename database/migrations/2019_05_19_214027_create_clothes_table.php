@@ -17,10 +17,12 @@ class CreateClothesTable extends Migration
             $table->increments('id');
             $table->string('owner');
             $table->string('pic_url');
-            $table->string('category')->default('未填写'); //上装1，下装2，鞋子3，配饰4
+            $table->string('category')->default('未填写'); //上装1，下装2，鞋子3，配饰4 (discarded)   //大类-小类 如 上衣-卫衣 (now)
             $table->string('brand')->default('未填写');
             $table->string('color')->default('未填写');
             $table->string('price')->default('未填写');
+            $table->json('tags')->nullabe();
+            $table->string('remarks')->nullable();    //备注
 
             $table->integer('count')->default(0);
             $table->timestamps();

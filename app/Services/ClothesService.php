@@ -24,49 +24,82 @@ class ClothesService
 
         DB::beginTransaction();
         try {
-
+            $this->touchTags($clothes['tags'],$user_id);
+            $clothes['tags'] = json_encode($clothes['tags']);
             DB::table('clothes')->insertGetId($clothes);
+//            dd($clothes);
             DB::table('users')->where('user_id',$user_id)->increment('total');
             DB::commit();
         } catch ( Exception $e){
-//            echo $e->getMessage();
+            echo $e->getMessage();
             DB::rollBack();
         }
 
     }
 
-    public function getOrderClothes($user_id)
+    public function touchTags($tags,$user_id)
     {
-        $data = array();
-        $map = [
-            1 =>  'a',
-            2 =>  'b',
-            3 =>  'c',
-            4 =>  'd'
-        ];
-        for ($c=1 ; $c<=4 ; $c++)
+        $now = Carbon::now();
+        foreach ($tags as $tag)
         {
-            $data[$map[$c]] = $this->getClothes($user_id,$c);
+            $tag['tag_owner'] = $user_id;
+            $query = DB::table('tags')->where([
+                ['tag_owner','=',$tag['tag_owner']],
+                ['tag_name','=',$tag['tag_name']],
+                ['tag_type','=',$tag['tag_type']]
+            ]);
+//            dd($tag['tag_name']);
+            if ($query->first() != null)
+            {
+                $query->increment('tag_count');
+                $query->update(['updated_at' => $now] );
+            }
+            else
+            {
+                $tag['created_at'] = $now;
+                $tag['updated_at'] = $now;
+                DB::table('tags')->insert($tag);
+            }
         }
-        return $data;
     }
+//    public function getOrderClothes($user_id)     //这三都是小程序的  1
+//    {
+//        $data = array();
+//        $map = [
+//            1 =>  'a',
+//            2 =>  'b',
+//            3 =>  'c',
+//            4 =>  'd'
+//        ];
+//        for ($c=1 ; $c<=4 ; $c++)
+//        {
+//            $data[$map[$c]] = $this->getClothes($user_id,$c);
+//        }
+//        return $data;
+//    }
+//
+//    public function getOrderClothes2($user_id)       //前端内部吵架的结果      2
+//    {
+//        $data = array();
+//        for ($c=1 ; $c<=4 ; $c++)
+//        {
+//            $data[] = $this->getClothes($user_id,$c);
+//        }
+//        return $data;
+//    }
+//
+//
+//    public function getClothes($user_id,$category)        //  3
+//    {
+//        $clothes = DB::table('clothes')->where('owner',$user_id)->where('category',$category)->get();
+//        return $clothes;
+//    }
 
-    public function getOrderClothes2($user_id)       //前端内部吵架的结果
+    public function getAllClothes($user_id)
     {
-        $data = array();
-        for ($c=1 ; $c<=4 ; $c++)
-        {
-            $data[] = $this->getClothes($user_id,$c);
-        }
-        return $data;
+
     }
 
-
-    public function getClothes($user_id,$category)
-    {
-        $clothes = DB::table('clothes')->where('owner',$user_id)->where('category',$category)->get();
-        return $clothes;
-    }
 
     public function updateClothes($clothes,$owner)
     {
