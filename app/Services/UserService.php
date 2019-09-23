@@ -173,6 +173,10 @@ class UserService
         ]);
     }
 
+    /**
+     * @param $phone
+     * @return mixed 无用户为null
+     */
     public function getUserByPhone($phone)
     {
         $user = DB::table('users')->where('phone',$phone)->first();

@@ -302,6 +302,8 @@ use Illuminate\Support\Facades\Validator;class UserController extends Controller
             'phone' => $phone
         ];
 
+        $first_register = $this->userService->getUserByPhone($phone);
+
         $user_id = $this->userService->updatePhoneUser($userInfo);
         $token = $this->tokenService->makeToken($user_id);
 
@@ -311,7 +313,8 @@ use Illuminate\Support\Facades\Validator;class UserController extends Controller
             'errcode'   =>  0,
             'data'  =>  [
                 'user_id'   =>  $user_id,
-                'token'     =>  $token
+                'token'     =>  $token,
+                'first_register'    =>  $first_register == null
             ]
         ]);
     }
