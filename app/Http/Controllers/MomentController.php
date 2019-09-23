@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\MomentService;
 use App\Services\UserService;
 use Illuminate\Http\Request;
+use App\Tools\ValidatorHelper;
 
 class MomentController extends Controller
 {
@@ -19,14 +20,16 @@ class MomentController extends Controller
 
     public function createMoment(Request $request)
     {
-        $this->validate($request,[
-            'pics_url'  =>  'required'
-        ]);
-        $momentInfo['pics_url'] = json_encode($request['pics_url']);
-        $momentInfo['content'] = $request['content'];
-        $momentInfo['writer'] = $request['user']->user_id;
-
-        $this->momentService->createMoment($momentInfo);
+        $rules = [
+            'title' =>  'required',
+            'pics_url'  =>  'required',
+            'content'   =>  'required'
+        ];
+        $setData = ValidatorHelper::checkAndGet($request->all(),$rules);
+        $setData['pics_url'] = json_encode($request['pics_url']);
+        $setData['writer'] = $request['user']->user_id;
+//        dd($setData);
+        $this->momentService->createMoment($setData);
         return response([
             'errcode'   => 0
         ]);

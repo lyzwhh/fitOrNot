@@ -16,8 +16,9 @@ class CreateMomentsTable extends Migration
         Schema::create('moments', function (Blueprint $table) {
             $table->increments('id');
             $table->string('writer');
+            $table->string('title');
             $table->json('pics_url');
-            $table->integer('status')->default(0);
+            $table->integer('status')->default(0);  //-1为被删除
             $table->string('content')->nullable();
 
             $table->integer('likes_num')->default(0);
