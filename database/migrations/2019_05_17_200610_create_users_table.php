@@ -30,6 +30,9 @@ class CreateUsersTable extends Migration
             $table->integer('vip')->default(0); // 0 为免费会员
             $table->integer('hide_figure')->default(1);
 
+            $table->integer('followers')->default(0);   //关注他的人
+            $table->integer('following')->default(0);   //关注别人的数目
+
             $table->timestamps();
         });
     }

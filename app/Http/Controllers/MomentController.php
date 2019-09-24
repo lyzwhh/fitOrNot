@@ -26,7 +26,6 @@ class MomentController extends Controller
             'content'   =>  'required'
         ];
         $setData = ValidatorHelper::checkAndGet($request->all(),$rules);
-        $setData['pics_url'] = json_encode($request['pics_url']);
         $setData['writer'] = $request['user']->user_id;
 //        dd($setData);
         $this->momentService->createMoment($setData);

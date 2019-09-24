@@ -37,10 +37,7 @@ class MomentService
                     'moments.writer','users.avatar_url','moments.id','users.nickname')
             ->orderBy('moments.created_at', 'desc')
             ->paginate(24);
-        foreach ($momentData as $m)
-        {
-            $m->pics_url = json_decode($m->pics_url);
-        }
+
         return $momentData;
     }
 
@@ -75,10 +72,6 @@ class MomentService
                 'moments.writer','users.avatar_url','moments.id','users.nickname')
             ->orderBy('moments.created_at', 'desc')
             ->paginate(24);
-        foreach ($momentData as $m)
-        {
-            $m->pics_url = json_decode($m->pics_url);
-        }
         return $momentData;
     }
 

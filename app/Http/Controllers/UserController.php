@@ -168,6 +168,14 @@ use Illuminate\Support\Facades\Validator;class UserController extends Controller
 
     public function deleteFollow($user_id,Request $request)
     {
+        $flag = $this->userService->checkIfFollowed($request['user']->user_id,$user_id);
+        if ($flag)
+        {
+            return response([
+                'errcode'   =>  -1,
+                'errmsg'    =>  '未关注该用户'
+            ]);
+        }
         $this->userService->deleteFollow($request['user']->user_id,$user_id);
         return response([
             'errcode'   =>  '0',

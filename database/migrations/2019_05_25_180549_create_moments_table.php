@@ -17,7 +17,7 @@ class CreateMomentsTable extends Migration
             $table->increments('id');
             $table->string('writer');
             $table->string('title');
-            $table->json('pics_url');
+            $table->string('pics_url');
             $table->integer('status')->default(0);  //-1为被删除
             $table->string('content')->nullable();
 

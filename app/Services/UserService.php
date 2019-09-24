@@ -75,7 +75,8 @@ class UserService
     public function getUserInfo($userInfo)      //获取自己身材等信息
     {
         $detail = DB::table('users')->where('user_id',$userInfo->user_id)
-                                    ->select('user_id','phone', 'avatar_url','nickname','height','weight','signature','liked','birth_year as age')->first();
+                                    ->select('user_id','phone', 'avatar_url','nickname','height','weight','signature',
+                                            'liked','birth_year as age','followers','following')->first();
         if ($detail->age > 0)
         {
             $detail->age = Carbon::now()->year - $detail->age;      //  year to age
@@ -112,13 +113,23 @@ class UserService
         }
         else if ($this->checkIfFollowed($from,$to))
         {
-            DB::table('follows')->insert([
-                'from'  =>  $from,
-                'to'    =>  $to,
-                'created_at'    =>  Carbon::now(),
-                'updated_at'    =>  Carbon::now()
-            ]);
-            return 1;           //成功
+            DB::beginTransaction();
+            try {
+                DB::table('follows')->insert([
+                    'from'  =>  $from,
+                    'to'    =>  $to,
+                    'created_at'    =>  Carbon::now(),
+                    'updated_at'    =>  Carbon::now()
+                ]);
+                DB::table('users')->where('user_id',$from)->increment('following');
+                DB::table('users')->where('user_id',$to)->increment('followers');
+                DB::commit();
+                return 1;           //成功
+            } catch ( Exception $e){
+                echo $e->getMessage();
+                DB::rollBack();
+            }
+
         }
         else
         {
@@ -129,10 +140,21 @@ class UserService
 
     public function deleteFollow($from,$to)
     {
-        DB::table('follows')->where([
-            'from'  =>  $from,
-            'to'    =>  $to
-        ])->delete();
+        DB::beginTransaction();
+        try {
+//            dd($from,$to);
+            DB::table('follows')->where([
+                'from'  =>  "$from",
+                'to'    =>  $to
+            ])->delete();
+            DB::table('users')->where('user_id',$from)->decrement('following');
+            DB::table('users')->where('user_id',$to)->decrement('followers');
+            DB::commit();
+        } catch ( Exception $e){
+            echo $e->getMessage();
+            DB::rollBack();
+        }
+
     }
 
     public function checkIfFollowed($from,$to)
