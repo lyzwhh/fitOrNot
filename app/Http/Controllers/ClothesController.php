@@ -68,10 +68,30 @@ class ClothesController extends Controller
 //            'data'  =>  $clothes
 //        ]);
 //    }
+
+    /**
+     * @param Request $request
+     * 获取自己所有衣服
+     */
     public function getClothes(Request $request)    //app用
     {
         $userInfo = $request['user'];
-        $clothes = $this->clothesService->getAllClothes();
+        $clothes = $this->clothesService->getAllClothes($userInfo->user_id);
+        return response([
+            'errcode'   =>  0,
+            'data'      =>  $clothes
+        ]);
+    }
+
+    public function getClothesByWord(Request $request)
+    {
+        $userInfo = $request['user'];
+        $word = $request['word'];
+        $clothes = $this->clothesService->getClothesByWord($userInfo->user_id,$word);
+        return response([
+            'errcode'   =>  0,
+            'data'      =>  $clothes
+        ]);
     }
 
     public function updateClothes(Request $request)

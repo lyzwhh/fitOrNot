@@ -97,9 +97,25 @@ class ClothesService
 
     public function getAllClothes($user_id)
     {
-
+        $clothes = DB::table('clothes')->where('owner',$user_id)->orderby('created_at','desc')->paginate(15);
+        $clothes = json_decode(json_encode($clothes), true);
+        foreach ($clothes['data'] as &$c)
+        {
+            $c['tags'] = json_decode($c['tags']);
+        }
+        return $clothes;
     }
 
+    public function getClothesByWord($user_id,$word)
+    {
+        $clothes = DB::table('clothes')->where('owner',$user_id)->where('category','like','%'.$word.'%')->orderby('created_at','desc')->paginate(15);
+        $clothes = json_decode(json_encode($clothes), true);
+        foreach ($clothes['data'] as &$c)
+        {
+            $c['tags'] = json_decode($c['tags']);
+        }
+        return $clothes;
+    }
 
     public function updateClothes($clothes,$owner)
     {
