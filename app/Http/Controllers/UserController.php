@@ -326,4 +326,39 @@ use Illuminate\Support\Facades\Validator;class UserController extends Controller
             ]
         ]);
     }
+
+    public function registerByWxPhone(Request $request)
+    {
+        $userInfo = $request['user'];
+        $data = null;
+        $result = $this->wxxcxService->decryptData($userInfo['user_id'],$request['encryptedData'],$request['iv'],$data);
+        if ($result == -1)
+        {
+            return response([
+                'errcode'   =>  -1,
+                'errmsg'    =>  "session_key 不存在"
+            ]);
+        }
+        else if ($result == -2)
+        {
+            return response([
+                'errcode'   =>  -1,
+                'errmsg'    =>  "iv有误"
+            ]);
+        }
+        else if ($result == -3)
+        {
+            return response([
+                'errcode'   =>  -1,
+                'errmsg'    =>  "buffer非法"
+            ]);
+        }
+        else if ($result == 0)
+        {
+            return response([
+                'errcode'   =>  0,
+                'data'  =>  $data
+            ]);
+        }
+    }
 }

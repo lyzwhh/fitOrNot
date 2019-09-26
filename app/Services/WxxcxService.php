@@ -8,6 +8,8 @@
 namespace App\Services;
 
 
+use Illuminate\Support\Facades\DB;
+
 Class WxxcxService
 {
     private $CODE2SESSION_URL = "https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code";
@@ -98,5 +100,48 @@ Class WxxcxService
         }
     }
 
+
+    /**
+     * 检验数据的真实性，并且获取解密后的明文.
+     * @param $user_id
+     * @param $encryptedData string 加密的用户数据
+     * @param $iv string 与用户数据一同返回的初始向量
+     * @param $data string 解密后的原文
+     *
+     * @return int 成功0，失败返回对应的错误码
+     */
+    public function decryptData($user_id, $encryptedData, $iv, &$data )
+    {
+        $user_data = DB::table('users')->where('user_id',$user_id)->select('session_key','appid')->toArray();
+        if ($user_data['session_key'].isEmpty())
+        {
+            return -1;
+        }
+        $sessionKey = $user_data['session_key'];
+
+        $aesKey=base64_decode($sessionKey);
+
+
+        if (strlen($iv) != 24) {
+            return -2;      //iv有误
+        }
+        $aesIV=base64_decode($iv);
+
+        $aesCipher=base64_decode($encryptedData);
+
+        $result=openssl_decrypt( $aesCipher, "AES-128-CBC", $aesKey, 1, $aesIV);
+
+        $dataObj=json_decode( $result );
+        if( $dataObj  == NULL )
+        {
+            return -3;      //buffer非法
+        }
+        if( $dataObj->watermark->appid != env('WX_APP_ID') )
+        {
+            return -2;      //buffer非法
+        }
+        $data = $result;
+        return 0;
+    }
 
 }

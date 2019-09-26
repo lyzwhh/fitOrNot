@@ -24,7 +24,7 @@ class CreateClothesTable extends Migration
             $table->json('tags')->nullabe();
             $table->string('remarks')->nullable();    //备注
 
-            $table->integer('count')->default(0);
+            $table->integer('count')->default(0);       // todo 去除穿衣函数 , 创建搭配衣服的时候自增
             $table->timestamps();
         });
     }
