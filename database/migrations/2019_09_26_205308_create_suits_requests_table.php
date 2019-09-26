@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateSuitsTable extends Migration
+class CreateSuitsRequestsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,13 @@ class CreateSuitsTable extends Migration
      */
     public function up()
     {
-        Schema::create('suits', function (Blueprint $table) {   //todo 搭配师字段 , title , 分类 , tags , (使用的单品)
+        Schema::create('suits_requests', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('owner');
-            $table->integer('count')->default(0);
-            $table->integer('total_price');
-            $table->integer('per_price')->default(0);
-            $table->json('clothes');
-
+            $table->integer('from');
+            $table->integer('to');
+            $table->integer('status');
+            $table->string('order_msg');
+            $table->string('feed_back');
             $table->timestamps();
         });
     }
@@ -32,6 +31,6 @@ class CreateSuitsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('suits');
+        Schema::dropIfExists('suits_requests');
     }
 }

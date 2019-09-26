@@ -96,20 +96,24 @@ class ClothesController extends Controller
 
     public function updateClothes(Request $request)
     {
-        $this->validate($request,[
-            'clothes.*.id' =>  'required'
-        ]);
+        $rules = [
+            'id'        =>  'required',
+            'pic_url'   =>  'sometimes',
+            'category'  =>  'sometimes',
+            'brand'     =>  'sometimes',
+            'color'     =>  'sometimes',
+            'tags'      =>  'sometimes',
+            'remarks'   =>  'sometimes'
+        ];
+
+        $setData = ValidatorHelper::checkAndGet($request['clothes'],$rules);
         $userInfo = $request['user'];
-        $clothesInfo = $request['clothes'];
-        foreach ($clothesInfo as $clothes)
+        if ($this->clothesService->updateClothes($setData,$userInfo->user_id) == -1)
         {
-            if ($this->clothesService->updateClothes($clothes,$userInfo->user_id) == -1)
-            {
-                return response([
-                    'errcode'  =>  -1,
-                    'errmsg'   =>  "非衣服主人,无法修改"
-                ]);
-            }
+            return response([
+                'errcode'  =>  -1,
+                'errmsg'   =>  "非衣服主人,无法修改"
+            ]);
         }
 
         return response([
