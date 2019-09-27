@@ -261,7 +261,8 @@ use Illuminate\Support\Facades\Validator;class UserController extends Controller
         if (RedisService::checkCache(RedisService::getPrefix_1().$phone))
         {
             $vCode = RedisService::getCache(RedisService::getPrefix_1().$phone);
-            $vCode = json_decode($vCode)->vCode;
+            $vCode = json_decode($vCode)->vCode;        // 重新设置时间
+            RedisService::setPhone($phone,$vCode);
         }
         else
         {
