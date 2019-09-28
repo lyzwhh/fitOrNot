@@ -124,7 +124,7 @@ class ClothesController extends Controller
     public function deleteClothes($id,Request $request)
     {
         $userInfo = $request['user'];
-        if ($this->clothesService->getOwner($id) != $userInfo->user_id)
+        if ($this->clothesService->getClothesOwnerById($id) != $userInfo->user_id)
         {
             return response([
                 'errcode'  =>  -1,
@@ -175,7 +175,6 @@ class ClothesController extends Controller
 
         return response([
             'errcode'   =>  0,
-            'flag'  =>  1,
             'data'  =>  $data
         ]);
     }

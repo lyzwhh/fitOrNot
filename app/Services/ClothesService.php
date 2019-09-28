@@ -119,7 +119,7 @@ class ClothesService
 
     public function updateClothes($clothes,$owner)
     {
-        if($this->getOwner($clothes['id']) != $owner)
+        if($this->getClothesOwnerById($clothes['id']) != $owner)
         {
             return -1;
         }
@@ -130,7 +130,7 @@ class ClothesService
         }
     }
 
-    public function getOwner($clothesId)
+    public function getClothesOwnerById($clothesId)
     {
         $clothes = DB::table('clothes')->where('id',$clothesId)->first();
         return $clothes->owner ?? -1;       //不存在user_id为-1的用户
@@ -165,11 +165,6 @@ class ClothesService
     public function clothesCount($id)
     {
         DB::table('clothes')->where('id',$id)->increment('count');
-    }
-
-    public function getClothesOwnerById($id)
-    {
-        return DB::table('clothes')->where('id',$id)->pluck('owner')[0] ?? -1;    //否则用不存在的id 会报错
     }
 
     public function setSuit($suitInfo,$userInfo,$ids)
