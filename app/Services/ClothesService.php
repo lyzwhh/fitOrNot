@@ -169,12 +169,12 @@ class ClothesService
 
     public function getClothesOwnerById($id)
     {
-        return DB::table('clothes')->where('id',$id)->pluck('owner')[0];
+        return DB::table('clothes')->where('id',$id)->pluck('owner')[0] ?? -1;    //否则用不存在的id 会报错
     }
 
     public function setSuit($suitInfo,$userInfo,$ids)
     {
-        foreach ($ids as $id)
+        foreach ($ids as $id)       //减少下方事务中的工作量
         {
             if ($userInfo->user_id != $this->getClothesOwnerById($id))
             {
@@ -209,10 +209,11 @@ class ClothesService
 
     public function getAllSuit($user_id)
     {
-        $suits = DB::table('suits')->where('owner',$user_id)->orderby('created_at','desc')->get();
-        foreach ($suits as $suit)           //多条套装记录
+        $suits = DB::table('suits')->where('owner',$user_id)->orderby('created_at','desc')->paginate(30);
+        $suits = json_decode(json_encode($suits),true);
+        foreach ($suits['data'] as &$suit)           //多条套装记录
         {
-            $suit->tags = json_decode($suit->tags);
+            $suit['tags'] = json_decode($suit['tags']);
             $this->checkSuitRequest($suit,0);
         }
         return $suits;
@@ -220,21 +221,21 @@ class ClothesService
 
     /**
      * 如果需要添加搭配师的名字 , 就会添加 helper字段
-     * @param $suit
+     * @param $suit 数组
      * @param $opt
      */
     public function checkSuitRequest(&$suit, $opt)        //todo 测试
     {
-        $request_id = $suit->request_id;
+        $request_id = $suit['request_id'];
         if ($request_id)
         {
             $query = DB::table('suits_request')->where('request_id',$request_id);
             if ($opt == 0)
             {
-                $suit->helper = $query->pluck('to')[0];
+                $suit['helper'] = $query->pluck('to')[0];
             }
         }
-        unset($suit->request_id);
+        unset($suit['request_id']);
     }
 
     public function addPic2clothes($clothes)
