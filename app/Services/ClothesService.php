@@ -162,32 +162,79 @@ class ClothesService
         return $price[0];
     }
 
-    public function setSuit($suitInfo,$userInfo)
+    public function clothesCount($id)
     {
-        $totalPrice = 0;
-        foreach ($suitInfo as $s)
+        DB::table('clothes')->where('id',$id)->increment('count');
+    }
+
+    public function getClothesOwnerById($id)
+    {
+        return DB::table('clothes')->where('id',$id)->pluck('owner')[0];
+    }
+
+    public function setSuit($suitInfo,$userInfo,$ids)
+    {
+        foreach ($ids as $id)
         {
-            $totalPrice += $this->getPrice($s['id']);
+            if ($userInfo->user_id != $this->getClothesOwnerById($id))
+            {
+                return -1;
+            }
         }
-        $suitInfo = json_encode($suitInfo);
-        DB::table('suits')->insert([
-            'total_price'   =>  $totalPrice,
-            'clothes'   =>  $suitInfo,
+        $suitInfo = array_merge($suitInfo,[
             'owner' =>  $userInfo->user_id,
             'created_at'    =>  Carbon::now(),
             'updated_at'    =>  Carbon::now()
         ]);
+
+        DB::beginTransaction();
+        try {
+            $this->touchTags($suitInfo['tags'],$userInfo->user_id);
+            $suitInfo['tags'] = json_encode($suitInfo['tags']);
+            DB::table('suits')->insert($suitInfo);
+            foreach ($ids as $id)
+            {
+                $this->clothesCount($id);
+            }
+
+            DB::commit();
+        } catch ( Exception $e){
+            dd($e->getMessage());
+            DB::rollBack();
+
+            return -1;
+        }
+        return 0;
     }
 
-    public function getSuit($user_id)
+    public function getAllSuit($user_id)
     {
-        $suits = DB::table('suits')->where('owner',$user_id)->get();
+        $suits = DB::table('suits')->where('owner',$user_id)->orderby('created_at','desc')->get();
         foreach ($suits as $suit)           //多条套装记录
         {
-            $suit->clothes = json_decode($suit->clothes);
-            $suit = $this->addPic2clothes($suit->clothes);
+            $suit->tags = json_decode($suit->tags);
+            $this->checkSuitRequest($suit,0);
         }
         return $suits;
+    }
+
+    /**
+     * 如果需要添加搭配师的名字 , 就会添加 helper字段
+     * @param $suit
+     * @param $opt
+     */
+    public function checkSuitRequest(&$suit, $opt)        //todo 测试
+    {
+        $request_id = $suit->request_id;
+        if ($request_id)
+        {
+            $query = DB::table('suits_request')->where('request_id',$request_id);
+            if ($opt == 0)
+            {
+                $suit->helper = $query->pluck('to')[0];
+            }
+        }
+        unset($suit->request_id);
     }
 
     public function addPic2clothes($clothes)

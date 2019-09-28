@@ -14,10 +14,10 @@ class CreateSuitsRequestsTable extends Migration
     public function up()
     {
         Schema::create('suits_requests', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('from');
-            $table->integer('to');
-            $table->integer('status');
+            $table->increments('request_id');
+            $table->integer('request_from');
+            $table->integer('request_to');
+            $table->integer('request_status');
             $table->string('order_msg');
             $table->string('feed_back');
             $table->timestamps();

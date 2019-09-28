@@ -141,13 +141,28 @@ class ClothesController extends Controller
         ]);
     }
 
-    public function setSuit(Request $request)
+    public function setSuit(Request $request)       //todo title默认值处理 , tags
     {
 //        dd($request);
+        $rule = [
+            "clothes"   =>  "required",
+            "category"  =>  "required",
+            "title"     =>  "sometimes",
+            "tags"      =>  "sometimes",
+            "remarks"   =>  "sometimes",
+            "background"=>  "sometimes"
+        ];
         $userInfo = $request['user'];
         $suitInfo = $request['suit'];
-        $this->clothesService->setSuit($suitInfo,$userInfo);
-
+        $setData = ValidatorHelper::checkAndGet($suitInfo,$rule);
+        $flag = $this->clothesService->setSuit($setData,$userInfo,$suitInfo['id']);
+        if ($flag != 0)
+        {
+            return response([
+                'errcode'   =>  -1,
+                'errmsg'    =>  "添加失败"
+            ]);
+        }
         return response([
             'errcode'   =>  0
         ]);
@@ -156,7 +171,7 @@ class ClothesController extends Controller
 
     public function getSuit(Request $request)
     {
-        $data = $this->clothesService->getSuit($request['user']->user_id);
+        $data = $this->clothesService->getAllSuit($request['user']->user_id);
 
         return response([
             'errcode'   =>  0,
