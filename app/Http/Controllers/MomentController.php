@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\ClothesService;
 use App\Services\MomentService;
 use App\Services\UserService;
 use Illuminate\Http\Request;
@@ -11,22 +12,30 @@ class MomentController extends Controller
 {
     private $momentService;
     private $userService;
-
-    public function __construct(MomentService $momentService ,UserService $userService)
+    private $clothesService;
+    public function __construct(MomentService $momentService ,UserService $userService,ClothesService $clothesService)
     {
         $this->momentService = $momentService;
         $this->userService = $userService;
+        $this->clothesService = $clothesService;
     }
 
     public function createMoment(Request $request)
     {
         $rules = [
-            'title' =>  'required',
-            'pics_url'  =>  'required',
+            'suit_id'  =>  'required',
             'content'   =>  'required'
         ];
         $setData = ValidatorHelper::checkAndGet($request->all(),$rules);
         $setData['writer'] = $request['user']->user_id;
+        $owner = $this->clothesService->getSuitOwner($setData['suit_id']);
+        if ($owner != $setData['writer'])
+        {
+            return response([
+                'errcode'   =>  -1,
+                'errmsg'    =>  "非该搭配所有者"
+            ]);
+        }
 //        dd($setData);
         $this->momentService->createMoment($setData);
         return response([
@@ -34,10 +43,9 @@ class MomentController extends Controller
         ]);
     }
 
-    public function getMoment()
+    public function getMoment()     //todo 排序
     {
         $momentData = $this->momentService->getNewestMoment();
-
 
         return response([
             'errcode' => 0,
@@ -123,11 +131,20 @@ class MomentController extends Controller
 
     public function createComment(Request $request)
     {
-        $this->validate($request,[
-            'comment.content'   =>  'required',
-            'comment.to'    =>  'required'
-        ]);
+        $rule = [
+            'content'   =>  'required',
+            'to'    =>  'required'
+        ];
         $commentInfo = $request['comment'];
+        $setData = ValidatorHelper::checkAndGet($commentInfo,$rule);
+//        dd($setData);
+        if ($this->momentService->getMomentById($setData['to']) == null)
+        {
+            return response([
+                'errcode'   =>  -1,
+                'errmsg'    =>  "moment不存在"
+            ]);
+        }
         $commentInfo['from'] = $request['user']->user_id;
         $this->momentService->createComment($commentInfo);
         return response([

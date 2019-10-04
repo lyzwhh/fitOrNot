@@ -33,11 +33,17 @@ class MomentService
 
         $momentData = DB::table('moments')->where('status',0)
             ->join('users','moments.writer','=','users.user_id')
-            ->select('moments.pics_url','moments.content','moments.likes_num','moments.comments_num',
-                    'moments.writer','users.avatar_url','moments.id','users.nickname')
+            ->join('suits','moments.suit_id','=','suits.id')
+            ->select('moments.content','moments.writer','users.avatar_url','moments.id','users.nickname'
+                ,'moments.likes_num','moments.comments_num','moments.views_num','suits.clothes as pic_url',
+                'suits.request_id','suits.tags')
             ->orderBy('moments.created_at', 'desc')
             ->paginate(24);
-
+        $momentData = json_decode(json_encode($momentData),true);
+        foreach ($momentData['data'] as &$data)
+        {
+            $data['tags'] = json_decode($data['tags']);
+        }
         return $momentData;
     }
 
@@ -73,6 +79,12 @@ class MomentService
             ->orderBy('moments.created_at', 'desc')
             ->paginate(24);
         return $momentData;
+    }
+
+    public function getMomentById($moment_id)
+    {
+        $data = DB::table('moments')->where('id',$moment_id)->first();
+        return $data;
     }
 
 
@@ -198,7 +210,9 @@ class MomentService
                 $referName = DB::table('users')->where('user_id',$d->refer)->pluck('nickname');
                 $d->referName = $referName[0];
             }
+            $d->avatar_url = DB::table('users')->where('user_id',$d->from)->pluck('avatar_url')[0];
         }
+        DB::table('moments')->where('id',$momentId)->increment('views_num');
         return $data;
     }
 }
