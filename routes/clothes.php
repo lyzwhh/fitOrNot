@@ -8,7 +8,7 @@
 Route::group(['prefix' => 'clothes','middleware' => 'token'],function (){
     Route::get('clothes','ClothesController@getClothes');
     Route::get('clothes2','ClothesController@getClothes2');      //前端内部吵架的结果
-    Route::post('like','ClothesController@getClothesByWord');
+    Route::post('clothes/like','ClothesController@getClothesByWord');
     Route::post('clothes','ClothesController@setClothes');
     Route::put('clothes','ClothesController@updateClothes');
     Route::delete('clothes/{id}','ClothesController@deleteClothes');
@@ -17,5 +17,6 @@ Route::group(['prefix' => 'clothes','middleware' => 'token'],function (){
     Route::get('suit','ClothesController@getSuit');
     Route::delete('suit/{suitId}','ClothesController@deleteSuit');
     Route::get('suit/wear/{suitId}','ClothesController@wearSuit');
+    Route::post('suit/like','ClothesController@getSuitByWord');
 
 });

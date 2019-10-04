@@ -150,12 +150,14 @@ class ClothesController extends Controller
             "title"     =>  "sometimes",
             "tags"      =>  "sometimes",
             "remarks"   =>  "sometimes",
-            "background"=>  "sometimes"
+            "background"=>  "sometimes",
+            "clothes_ids"=> "sometimes"
         ];
         $userInfo = $request['user'];
         $suitInfo = $request['suit'];
         $setData = ValidatorHelper::checkAndGet($suitInfo,$rule);
-        $flag = $this->clothesService->setSuit($setData,$userInfo,$suitInfo['id']);
+        $setData['clothes_ids'] = implode(',',$setData['clothes_ids']);
+        $flag = $this->clothesService->setSuit($setData,$userInfo,$suitInfo['clothes_ids']);
         if ($flag != 0)
         {
             return response([
@@ -179,6 +181,17 @@ class ClothesController extends Controller
         ]);
     }
 
+    public function getSuitByWord(Request $request)
+    {
+        $userInfo = $request['user'];
+        $word = $request['word'];
+        $clothes = $this->clothesService->getSuitByWord($userInfo->user_id,$word);
+        return response([
+            'errcode'   =>  0,
+            'data'      =>  $clothes
+        ]);
+    }
+
     public function deleteSuit($suitId,Request $request)
     {
         $userInfo = $request['user'];
@@ -189,13 +202,24 @@ class ClothesController extends Controller
                 'errmsg'    =>  '非该套装主人'
             ]);
         }
-        $this->clothesService->deleteSuit($suitId);
-        return response([
-            'errcode'   =>  0
-        ]);
+        $flag = $this->clothesService->deleteSuit($suitId,$userInfo);
+        if ($flag == 0)
+        {
+            return response([
+                'errcode'   =>  0
+            ]);
+        }
+        else
+        {
+            return response([
+                'errcode'   =>  -1,
+                'errmsg'    =>  "删除失败"
+            ]);
+        }
+
     }
 
-    public function wearSuit($suitId,Request $request)
+    public function wearSuit($suitId,Request $request)  //删了它
     {
         $userInfo = $request['user'];
 //        dd($this->clothesService->getSuitOwner($suitId));

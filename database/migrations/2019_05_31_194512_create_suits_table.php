@@ -21,6 +21,7 @@ class CreateSuitsTable extends Migration
 //            $table->integer('per_price')->default(0);
             $table->string('title');                    //名称
             $table->string('clothes');                    //搭配结果的图片的url
+            $table->string('clothes_ids')->nullable();
             $table->integer('request_id')->nullable();  //如果是请求别搭配的搭配 , 保存那个suit_request的id
             $table->string('category');
             $table->json('tags')->nullable();

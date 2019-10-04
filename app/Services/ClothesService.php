@@ -166,8 +166,18 @@ class ClothesService
     {
         DB::table('clothes')->where('id',$id)->increment('count');
     }
+    public function clothesDeCount($id)
+    {
+        DB::table('clothes')->where('id',$id)->decrement('count');
+    }
 
-    public function setSuit($suitInfo,$userInfo,$ids)
+    /**
+     * @param $suitInfo
+     * @param $userInfo
+     * @param $ids 各个衣物的id
+     * @return int
+     */
+    public function setSuit($suitInfo, $userInfo, $ids)
     {
         foreach ($ids as $id)       //减少下方事务中的工作量
         {
@@ -182,7 +192,7 @@ class ClothesService
             'updated_at'    =>  Carbon::now()
         ]);
 
-        DB::beginTransaction();
+        DB::beginTransaction();         //tags 的count ， clothes 的count
         try {
             $this->touchTags($suitInfo['tags'],$userInfo->user_id);
             $suitInfo['tags'] = json_encode($suitInfo['tags']);
@@ -232,7 +242,16 @@ class ClothesService
         }
         unset($suit['request_id']);
     }
-
+    public function getSuitByWord($user_id,$word)
+    {
+        $clothes = DB::table('suits')->where('owner',$user_id)->where('category','like','%'.$word.'%')->orderby('created_at','desc')->paginate(15);
+        $clothes = json_decode(json_encode($clothes), true);
+        foreach ($clothes['data'] as &$c)
+        {
+            $c['tags'] = json_decode($c['tags']);
+        }
+        return $clothes;
+    }
     public function addPic2clothes($clothes)
     {
         foreach ($clothes as $c)        //一个套装里面多个衣服
@@ -258,9 +277,56 @@ class ClothesService
         return $owner[0];
     }
 
-    public function deleteSuit($suitId)
+    public function deleteSuit($suitId,$userInfo) //tags的count ， 衣物的count
     {
-        DB::table('suits')->where('id',$suitId)->delete();
+        $suitInfo = $this->getSuitById($suitId);
+//        dd($suitInfo);
+        DB::beginTransaction();
+        try {
+            $this->deTags($suitInfo->tags,$userInfo->user_id);
+            foreach ($suitInfo->clothes_ids as $id)
+            {
+                $this->clothesDeCount($id);
+            }
+
+            DB::table('suits')->where('id',$suitId)->delete();
+            DB::commit();
+        } catch ( Exception $e){
+            dd($e->getMessage());
+            DB::rollBack();
+
+            return -1;
+        }
+        return 0;
+
+    }
+
+    public function getSuitById($suitId)
+    {
+        $data = DB::table('suits')->where('id',$suitId)->first();
+        $data->tags = json_decode($data->tags);
+        $data->clothes_ids = explode(',',$data->clothes_ids);
+        return $data;
+    }
+
+    public function deTags($tags,$user_id)
+    {
+        $now = Carbon::now();
+        foreach ($tags as $tag)
+        {
+            $tag->tag_owner = $user_id;
+            $query = DB::table('tags')->where([
+                ['tag_owner','=',$tag->tag_owner],
+                ['tag_name','=',$tag->tag_name],
+                ['tag_type','=',$tag->tag_type]
+            ]);
+//            dd($tag['tag_name']);
+            if ($query->pluck('tag_count')[0] > 1)
+            {
+                $query->decrement('tag_count');
+                $query->update(['updated_at' => $now] );
+            }
+        }
     }
 
     public function wearSuit($suitId)
