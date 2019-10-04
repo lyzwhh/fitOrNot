@@ -24,7 +24,7 @@ class CreateUsersTable extends Migration
             $table->string('weight')->default('点击填写');
             $table->string('signature')->default('点击填写');
             $table->integer('liked')->default(0);
-            $table->string('avatar_url')->default('https://cdn.lyzwhh.top/avatar.jpg');
+            $table->string('avatar_url')->default('http://cdn.lyzwhh.top/avatar.jpg');
 
             $table->integer('total')->default(0); //衣服数量
             $table->integer('vip')->default(0); // 0 为免费会员

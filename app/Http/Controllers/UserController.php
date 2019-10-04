@@ -6,6 +6,7 @@ use App\Services\MomentService;
 use App\Services\RedisService;
 use App\Services\SMSService;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use App\Services\WxxcxService;
@@ -277,7 +278,7 @@ use Illuminate\Support\Facades\Validator;class UserController extends Controller
 
     }
 
-    public function registerByVCode(Request $request)   //叫做注册 , 但也登录
+    public function registerByVCode(Request $request)   //叫做注册 , 但也登录 , 懒得改了
     {
         $this->validate($request,[
             'phone' =>  [
@@ -318,12 +319,15 @@ use Illuminate\Support\Facades\Validator;class UserController extends Controller
 
         RedisService::delVCode($phone);         //todo 删除后checkPhoneFreq 失效 , 可通过发短信 - 登录 - 发短信 - 登录 . 快速发短信 . throttle中间件限流
 
+        $tmp = new Collection();
+        $tmp->user_id = $user_id;
         return response([
             'errcode'   =>  0,
             'data'  =>  [
                 'user_id'   =>  $user_id,
                 'token'     =>  $token,
-                'first_register'    =>  $first_register == null
+                'first_register'    =>  $first_register == null,
+                'user_info' =>  $this->userService->getUserInfo($tmp)   //aihao要求
             ]
         ]);
     }
