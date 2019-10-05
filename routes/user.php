@@ -17,6 +17,7 @@ Route::group(['prefix' => 'user'],function (){
     Route::get('/follow/{user_id}','UserController@createFollow')->middleware('token');
     Route::delete('/follow/{user_id}','UserController@deleteFollow')->middleware('token');
     Route::get('/allFollowed','UserController@getAllFollowed')->middleware('token');
+    Route::get('/allFollowing','UserController@getAllFollowing')->middleware('token');
     Route::get('/checkIfFollowed/{user_id}','UserController@checkIfFollowed')->middleware('token');
 
     Route::get('/getNicknameByUserId/{user_id}','UserController@getNicknameByUserId')->middleware('token');

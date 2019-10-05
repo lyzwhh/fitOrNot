@@ -169,9 +169,21 @@ class UserService
     public function getAllFollowed($user_id)
     {
         $data = DB::table('follows')->where([
+            'to'  =>  $user_id
+        ])  ->join('users','users.user_id','=','follows.from')
+            ->select('follows.from as user_id','users.nickname','users.avatar_url')
+            ->orderBy('follows.created_at', 'desc')
+            ->paginate(30);
+        return $data;
+    }
+
+    public function getAllFollowing($user_id)
+    {
+        $data = DB::table('follows')->where([
             'from'  =>  $user_id
-        ])  ->select('to')
-            ->orderBy('created_at', 'desc')
+        ])  ->join('users','users.user_id','=','follows.to')
+            ->select('follows.to as user_id','users.nickname','users.avatar_url')
+            ->orderBy('follows.created_at', 'desc')
             ->paginate(30);
         return $data;
     }

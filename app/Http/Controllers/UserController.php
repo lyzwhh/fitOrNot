@@ -210,6 +210,15 @@ use Illuminate\Support\Facades\Validator;class UserController extends Controller
         ]);
     }
 
+    public function getAllFollowing(Request $request)
+    {
+        $data = $this->userService->getAllFollowing($request['user']->user_id);
+        return response([
+            'errcode'   =>  0,
+            'data'  =>$data
+        ]);
+    }
+
     public function getNicknameByUserId($user_id)
     {
         $data = $this->userService->getNicknameByUserId($user_id);
