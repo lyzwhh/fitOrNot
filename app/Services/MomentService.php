@@ -102,8 +102,9 @@ class MomentService
                     'created_at'    =>  Carbon::now(),
                     'updated_at'    =>  Carbon::now()
                 ]);
-                DB::table('users')->join('moments','moments.writer','=','users.user_id')
-                    ->where('moments.id',$to)->increment('users.liked');
+                DB::table('moments')->where('id',$to)
+                    ->join('users','moments.writer','=','users.user_id')
+                    ->increment('users.liked');
                 DB::table('moments')->where('id',$to)->increment('likes_num');
 
                 DB::commit();
@@ -132,6 +133,11 @@ class MomentService
 
     public function deleteLike($from,$to)       //from 为user_id ,to 为moment id
     {
+        $flag = $this->checkIfLiked($from,$to);
+        if ($flag == 1)
+        {
+            return 0;
+        }
         DB::beginTransaction();
         try {
 
@@ -139,8 +145,9 @@ class MomentService
                 'from'  =>  $from,
                 'to'    =>  $to
             ])->delete();
-            DB::table('users')->join('moments','moments.writer','=','users.user_id')
-                ->where('moments.id',$to)->decrement('users.liked');
+            DB::table('moments')->where('id',$to)
+                ->join('users','moments.writer','=','users.user_id')
+                ->decrement('users.liked');
             DB::table('moments')->where('id',$to)->decrement('likes_num');
 
             DB::commit();
