@@ -71,6 +71,14 @@ class MomentController extends Controller
 
     }
 
+    public function getAllMyLikedMoment(Request $request)
+    {
+        $userInfo = $request['user'];
+        $data = $this->momentService->getAllMyLikedMoment($userInfo->user_id);
+        return response([
+            'data'  =>  $data
+        ]);
+    }
     public function getMomentDetail($id)   //删除按钮是否要放在这,是否要识别是不是自己的moment
     {
 
@@ -157,10 +165,6 @@ class MomentController extends Controller
     public function deleteComment($commentId,Request $request)
     {
         $userInfo = $request['user'];
-//        return response([
-//            "data"  =>  collect([]) == null
-//            ]
-//        );
         if ($userInfo->user_id != $this->momentService->getCommentOwner($commentId) && $userInfo->user_id != null)
         {
             return response([

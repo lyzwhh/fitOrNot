@@ -11,7 +11,7 @@ Route::group(['prefix'  =>  'moment','middleware'   =>  'token'],function (){
     Route::get('moment_detail/{id}','MomentController@getMomentDetail');
     Route::get('getonesmoment/{user_id}','MomentController@getMomentByUserId');
     Route::delete('moment/{id}','MomentController@deleteMoment');
-
+    Route::get('allLikedMoment','MomentController@getAllMylikedMoment');
 
     Route::get('/like/{id}','MomentController@createLike')->middleware('token');
     Route::get('/checkIfLiked/{id}','MomentController@checkIfLiked')->middleware('token');
