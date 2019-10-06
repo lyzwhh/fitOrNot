@@ -171,7 +171,7 @@ class UserService
         $data = DB::table('follows')->where([
             'to'  =>  $user_id
         ])  ->join('users','users.user_id','=','follows.from')
-            ->select('follows.from as user_id','users.nickname','users.avatar_url')
+            ->select('follows.from as user_id','users.nickname','users.avatar_url','users.followers','users.following')
             ->orderBy('follows.created_at', 'desc')
             ->paginate(30);
         return $data;
@@ -182,7 +182,7 @@ class UserService
         $data = DB::table('follows')->where([
             'from'  =>  $user_id
         ])  ->join('users','users.user_id','=','follows.to')
-            ->select('follows.to as user_id','users.nickname','users.avatar_url')
+            ->select('follows.to as user_id','users.nickname','users.avatar_url','users.followers','users.following')
             ->orderBy('follows.created_at', 'desc')
             ->paginate(30);
         return $data;
