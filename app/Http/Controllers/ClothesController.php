@@ -237,4 +237,123 @@ class ClothesController extends Controller
 
     }
 
+
+
+
+
+    public function createSRequest(Request $request)
+    {
+        $rule = [
+            'request_to'    =>  'required',
+            'order_msg' =>  'required'
+        ];
+        $userInfo = $request['user'];
+        $setData = ValidatorHelper::checkAndGet($request['SRequest'],$rule);
+        $setData['request_from'] = $userInfo->user_id;
+        $this->clothesService->createSRequest($setData);
+        return response([
+            'errcode'   =>  0
+        ]);
+    }
+
+    public function getAllMySRing(Request $request)
+    {
+        $userInfo = $request['user'];
+        $data = $this->clothesService->getAllMySRing($userInfo->user_id);
+        return response([
+            'errcode'   =>  0,
+            'data'  =>$data
+        ]);
+    }
+
+    public function getAllMySRed(Request $request)
+    {
+        $userInfo = $request['user'];
+        $data = $this->clothesService->getAllMySRed($userInfo->user_id);
+        return response([
+            'errcode'   =>  0,
+            'data'  =>  $data
+        ]);
+    }
+
+    public function getAllClothesBySR($request_id,Request $request)
+    {
+        $userInfo = $request['user'];
+        $SR = $this->clothesService->getToSR($request_id,$userInfo->user_id);
+        if ($SR == null)
+        {
+            return response([
+                'errcode'   =>  -1,
+                'errmsg'    =>  "搭配请求信息有误"
+            ]);
+        }
+        elseif ($SR->request_status == 1)
+        {
+            return response([
+                'errcode'   =>  -1,
+                'errmsg'    =>  "搭配请求已完成"
+            ]);
+        }
+
+        $clothes = $this->clothesService->getAllClothesBySR($SR);
+        return response([
+            'errcode'   =>  0,
+            'data'  =>  $clothes
+        ]);
+
+    }
+
+    public function setSuitBySR(Request $request)
+    {
+        $rule = [
+            "clothes"   =>  "required",
+            "category"  =>  "required",
+            "title"     =>  "sometimes",
+            "tags"      =>  "sometimes",
+//            "remarks"   =>  "sometimes",      //不能备注，删除
+            "background"=>  "sometimes",
+            "clothes_ids"=> "sometimes",
+//            "feed_back" =>  "sometimes"       //request里有 ， setData不要
+            "request_id"    =>  "required"
+        ];
+        $userInfo = $request['user'];
+        $suitInfo = $request['suit'];
+        $setData = ValidatorHelper::checkAndGet($suitInfo,$rule);
+        $setData['clothes_ids'] = implode(',',$setData['clothes_ids']);
+        $SR = $this->clothesService->getToSR($setData['request_id'],$userInfo->user_id);
+        if ($SR->request_status != 0)
+        {
+            return response([
+                'errcode'   =>  -1,
+                'errmsg'    =>  "该搭配请求已完成"
+            ]);
+        }
+        $flag = $this->clothesService->setSuitBySR($setData,$suitInfo['clothes_ids'],$SR , $suitInfo['feed_back']);
+        if ($flag != 0)
+        {
+            return response([
+                'errcode'   =>  -1,
+                'errmsg'    =>  "添加失败"
+            ]);
+        }
+        return response([
+            'errcode'   =>  0
+        ]);
+    }
+
+    public function getSuitBySR($request_id,Request $request)
+    {
+        $userInfo = $request['user'];
+        $SR = $this->clothesService->getFromSR($request_id,$userInfo->user_id);
+        $suit = $this->clothesService->getSuitBySR($SR);
+
+        return response([
+            'errcode'   =>  0,
+            'data'      =>  $suit
+        ]);
+
+    }
+
+
+
 }

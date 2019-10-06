@@ -19,4 +19,11 @@ Route::group(['prefix' => 'clothes','middleware' => 'token'],function (){
     Route::get('suit/wear/{suitId}','ClothesController@wearSuit');
     Route::post('suit/like','ClothesController@getSuitByWord');
 
+    Route::post('SR','ClothesController@createSRequest');
+    Route::get('SR/SRing','ClothesController@getAllMySRing');
+    Route::get('SR/SRed','ClothesController@getAllMySRed');
+    Route::get('SR/clothes/{request_id}','ClothesController@getAllClothesBySR');
+    Route::post('SR/clothes','ClothesController@setSuitBySR');
+    Route::get('SR/suit/{request_id}','ClothesController@getSuitBySR');
+
 });

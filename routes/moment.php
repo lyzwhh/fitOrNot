@@ -14,6 +14,8 @@ Route::group(['prefix'  =>  'moment','middleware'   =>  'token'],function (){
     Route::get('allLikedMoment','MomentController@getAllMylikedMoment');
     Route::get('allFollowingMoment','MomentController@getAllMyFollowingMoment');
 
+    Route::get('refresh/{id}','MomentController@refreshMoment');
+
     Route::get('/like/{id}','MomentController@createLike');
     Route::get('/checkIfLiked/{id}','MomentController@checkIfLiked');
     Route::delete('/like/{id}','MomentController@deletelike');

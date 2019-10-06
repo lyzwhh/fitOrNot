@@ -188,7 +188,7 @@ class UserService
         return $data;
     }
 
-    public function getNicknameByUserId($user_id)
+    public static function getNicknameByUserId($user_id)
     {
         $data = DB::table('users')->where('user_id',$user_id)->pluck('nickname');
         return $data[0];

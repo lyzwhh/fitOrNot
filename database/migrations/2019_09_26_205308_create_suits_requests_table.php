@@ -17,9 +17,9 @@ class CreateSuitsRequestsTable extends Migration
             $table->increments('request_id');
             $table->integer('request_from');
             $table->integer('request_to');
-            $table->integer('request_status');
-            $table->string('order_msg');
-            $table->string('feed_back');
+            $table->integer('request_status')->default(0);  // 0 为未处理 ， 1为处理完成
+            $table->string('order_msg')->nullable();
+            $table->string('feed_back')->nullable();
             $table->timestamps();
         });
     }

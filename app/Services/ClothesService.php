@@ -219,6 +219,7 @@ class ClothesService
         foreach ($suits['data'] as &$suit)           //多条套装记录
         {
             $suit['tags'] = json_decode($suit['tags']);
+            $suit['clothes_ids'] =  explode(',',$suit['clothes_ids']);
             $this->checkSuitRequest($suit,0);
         }
         return $suits;
@@ -226,7 +227,8 @@ class ClothesService
 
     /**
      * 如果需要添加搭配师的名字 , 就会添加 helper字段
-     * @param $suit 数组
+     * @param $suit
+     * 数组
      * @param $opt
      */
     public function checkSuitRequest(&$suit, $opt)        //todo 测试
@@ -234,14 +236,26 @@ class ClothesService
         $request_id = $suit['request_id'];
         if ($request_id)
         {
-            $query = DB::table('suits_request')->where('request_id',$request_id);
+            $query = DB::table('suits_requests')->where('request_id',$request_id);
             if ($opt == 0)
             {
-                $suit['helper'] = $query->pluck('to')[0];
+                $suit['helper_id'] = $query->pluck('request_to')[0];
+                $suit['helper_nickname'] = UserService::getNicknameByUserId($suit['helper_id']);
+                foreach ($suit['clothes_ids'] as $id)
+                {
+                    $suit['clothes_idsAndPic'][$id] = $this->getClothesPic($id);
+                }
             }
         }
         unset($suit['request_id']);
     }
+
+    public function getClothesPic($clothesId)
+    {
+        $data = DB::table('clothes')->where('id',$clothesId)->pluck('pic_url');
+        return $data;
+    }
+
     public function getSuitByWord($user_id,$word)
     {
         $clothes = DB::table('suits')->where('owner',$user_id)->where('category','like','%'.$word.'%')->orderby('created_at','desc')->paginate(15);
@@ -353,6 +367,137 @@ class ClothesService
             echo $e->getMessage();
             DB::rollBack();
         }
+    }
+
+
+
+
+
+    public function createSRequest($setData)
+    {
+        DB::table('suits_requests')->insert($setData);
+    }
+
+    public function getAllMySRing($user_id)
+    {
+        $data = DB::table('suits_requests')->where('request_from',$user_id)
+            ->join('users','users.user_id','=','request_to')
+            ->select('request_id','request_from','request_to','order_msg','request_status',
+                'users.avatar_url','users.user_id','users.nickname')
+            ->paginate(12);
+        return $data;
+    }
+
+    public function getAllMySRed($user_id)
+    {
+        $data = DB::table('suits_requests')->where('request_to',$user_id)
+            ->join('users','users.user_id','=','request_from')
+            ->select('request_id','request_from','request_to','order_msg','request_status',
+                'users.avatar_url','users.user_id','users.nickname')
+            ->paginate(12);
+        return $data;
+    }
+
+
+    /**
+     * @param $SR    object
+     *    suit_request
+        +"request_id": 3
+        +"request_from": 3
+        +"request_to": 1
+        +"request_status": 0
+        +"order_msg": "随便搞搞"
+        +"feed_back": null
+        +"created_at": null
+        +"updated_at": null
+     *
+     * @return mixed
+     */
+    public function getAllClothesBySR($SR)   // SR为一个 object
+    {
+        $clothes = $this->getAllClothes($SR->request_from);
+        return $clothes;
+    }
+
+    /**
+     * 该接口给  收到  搭配请求的人用
+     * @param $request_id
+     * @param $to
+     * 当前用户
+     * @return mixed
+     */
+    public function getToSR($request_id , $to)        //to 是当前用户
+    {
+        $data = DB::table('suits_requests')->where('request_id',$request_id)->where('request_to',$to)->first();
+        return $data;
+    }
+
+
+    /**
+     * 该接口给  发送   搭配请求的人用
+     * @param $request_id
+     * @param $from
+     * 当前用户
+     * @return mixed
+     */
+    public function getFromSR($request_id , $from)
+    {
+        $data = DB::table('suits_requests')->where('request_id',$request_id)->where('request_to',$from)->first();
+        return $data;
+    }
+
+    public function setSuitBySR($suitInfo , $ids , $SR , $feed_back)     //不能嵌套事务，重写setSuit . 加入SR完成的事务
+    {
+        foreach ($ids as $id)       //减少下方事务中的工作量
+        {
+            if ($SR->request_from != $this->getClothesOwnerById($id))
+            {
+                return -1;
+            }
+        }
+        $suitInfo = array_merge($suitInfo,[
+            'owner' =>  $SR->request_from,
+            'created_at'    =>  Carbon::now(),
+            'updated_at'    =>  Carbon::now()
+        ]);
+
+        DB::beginTransaction();         //tags 的count ， clothes 的count
+        try {
+            $this->touchTags($suitInfo['tags'],$SR->request_from);
+            $suitInfo['tags'] = json_encode($suitInfo['tags']);
+            DB::table('suits')->insert($suitInfo);
+            foreach ($ids as $id)
+            {
+                $this->clothesCount($id);
+            }
+
+            DB::table('suits_requests')->where('request_id',$SR->request_id)->update([
+                "updated_at"    =>  Carbon::now(),
+                "feed_back"     =>  $feed_back,
+                "request_status"    =>  1
+            ]);
+
+            DB::commit();
+        } catch ( Exception $e){
+            dd($e->getMessage());
+            DB::rollBack();
+
+            return -1;
+        }
+        return 0;
+    }
+
+    /**
+     * 返回单一的套装
+     * @param $SR
+     * @return mixed
+     */
+    public function getSuitBySR($SR)
+    {
+        $suit = DB::table('suits')->where('request_id',$SR->request_id)->first();
+        $suit->feed_back = $SR->feed_back;
+        $suit->tags = json_decode($suit->tags);
+        return $suit;
     }
 
 }

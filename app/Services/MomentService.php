@@ -76,7 +76,7 @@ class MomentService
     //获取某人所有moment
     public function getMomentByUserId($my_user_id , $user_id)
     {
-        $momentData = DB::table('moments')->where('status',0)->where('user_id',$user_id)
+        $momentData = DB::table('moments')->where('status',0)->where('user_id',$user_id)->where('status',0)
             ->join('users','moments.writer','=','users.user_id')
             ->join('suits','moments.suit_id','=','suits.id')
             ->select('moments.content','moments.writer','users.avatar_url','moments.id','users.nickname'
@@ -113,7 +113,7 @@ class MomentService
 //            ->paginate(24);
 
         $momentData = DB::table('likes')
-            ->where('from',$user_id)
+            ->where('from',$user_id)->where('status',0)
             ->join('moments','moments.id','=','likes.to')
             ->join('users','moments.writer','=','users.user_id')
             ->join('suits','moments.suit_id','=','suits.id')
@@ -134,7 +134,7 @@ class MomentService
     public function getAllMyFollowingMoment($user_id)
     {
         $momentData = DB::table('follows')
-            ->where('from',$user_id)
+            ->where('from',$user_id)->where('status',0)
             ->join('users','follows.to','=','users.user_id')
             ->join('moments','moments.writer','=','users.user_id')      //分叉
             ->join('suits','moments.suit_id','=','suits.id')
@@ -154,7 +154,7 @@ class MomentService
 
     public function getMomentById($moment_id)
     {
-        $data = DB::table('moments')->where('id',$moment_id)->first();
+        $data = DB::table('moments')->where('id',$moment_id)->where('status',0)->first();
         return $data;
     }
 
@@ -291,6 +291,12 @@ class MomentService
             $d->avatar_url = DB::table('users')->where('user_id',$d->from)->pluck('avatar_url')[0];
         }
         DB::table('moments')->where('id',$momentId)->increment('views_num');
+        return $data;
+    }
+
+    public function refreshMoment($momentId)
+    {
+        $data = DB::table('moments')->where('id',$momentId)->where('status',0)->select('likes_num','views_num','comments_num')->first();
         return $data;
     }
 }

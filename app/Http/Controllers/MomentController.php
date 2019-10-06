@@ -198,4 +198,13 @@ class MomentController extends Controller
         ]);
     }
 
+    public function refreshMoment($momentId)
+    {
+        $data = $this->momentService->refreshMoment($momentId);
+        return response([
+            'errcode'   =>  0,
+            'data'      =>  $data
+        ]);
+    }
+
 }
