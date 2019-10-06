@@ -127,10 +127,10 @@ use Illuminate\Support\Facades\Validator;class UserController extends Controller
             'data'  =>  $detail
         ]);
     }
-    public function getOthersInfo($user_id)
+    public function getOthersInfo(Request $request , $user_id)
     {
         $detail = $this->userService->getOthersInfo($user_id);
-        $moment = $this->momentService->getMomentByUserId($user_id);
+        $moment = $this->momentService->getMomentByUserId($request['user']->user_id , $user_id);
         $data = array();
         $data['userInfo'] = $detail;
         $data['moment'] = $moment;

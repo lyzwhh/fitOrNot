@@ -157,7 +157,7 @@ class UserService
 
     }
 
-    public function checkIfFollowed($from,$to)
+    public static function checkIfFollowed($from,$to)
     {
         $data = DB::table('follows')->where([
             'from'  =>  $from,

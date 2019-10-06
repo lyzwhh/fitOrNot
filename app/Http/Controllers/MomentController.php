@@ -43,9 +43,9 @@ class MomentController extends Controller
         ]);
     }
 
-    public function getMoment()     //todo 排序
+    public function getMoment(Request $request)     //todo 排序
     {
-        $momentData = $this->momentService->getNewestMoment();
+        $momentData = $this->momentService->getNewestMoment($request['user']->user_id);
 
         return response([
             'errcode' => 0,
@@ -79,14 +79,24 @@ class MomentController extends Controller
             'data'  =>  $data
         ]);
     }
+
+    public function getAllMyFollowingMoment(Request $request)
+    {
+        $userInfo = $request['user'];
+        $data = $this->momentService->getAllMyFollowingMoment($userInfo->user_id);
+        return response([
+            'data'  =>  $data
+        ]);
+    }
+
     public function getMomentDetail($id)   //删除按钮是否要放在这,是否要识别是不是自己的moment
     {
 
     }
 
-    public function getMomentByUserId($user_id)
+    public function getMomentByUserId(Request $request , $user_id)
     {
-        $data = $this->momentService->getMomentByUserId($user_id);
+        $data = $this->momentService->getMomentByUserId($request['user']->user_id,$user_id);
         return response([
             'errcode'   =>  0,
             'data'  =>  $data

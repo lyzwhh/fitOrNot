@@ -12,14 +12,15 @@ Route::group(['prefix'  =>  'moment','middleware'   =>  'token'],function (){
     Route::get('getonesmoment/{user_id}','MomentController@getMomentByUserId');
     Route::delete('moment/{id}','MomentController@deleteMoment');
     Route::get('allLikedMoment','MomentController@getAllMylikedMoment');
+    Route::get('allFollowingMoment','MomentController@getAllMyFollowingMoment');
 
-    Route::get('/like/{id}','MomentController@createLike')->middleware('token');
-    Route::get('/checkIfLiked/{id}','MomentController@checkIfLiked')->middleware('token');
-    Route::delete('/like/{id}','MomentController@deletelike')->middleware('token');
+    Route::get('/like/{id}','MomentController@createLike');
+    Route::get('/checkIfLiked/{id}','MomentController@checkIfLiked');
+    Route::delete('/like/{id}','MomentController@deletelike');
 
 
-    Route::post('/comment','MomentController@createComment')->middleware('token');
-    Route::delete('/comment/{commentId}','MomentController@deleteComment')->middleware('token');     //为评论的id
-    Route::get('/comment/{momentId}','MomentController@getCommentByMoment')->middleware('token');
+    Route::post('/comment','MomentController@createComment');
+    Route::delete('/comment/{commentId}','MomentController@deleteComment');     //为评论的id
+    Route::get('/comment/{momentId}','MomentController@getCommentByMoment');
 
 });

@@ -9,7 +9,9 @@
 namespace App\Services;
 
 
+use App\User;
 use Illuminate\Support\Facades\DB;
+use App\Services\UserService;
 use Carbon\Carbon;
 class MomentService
 {
@@ -24,7 +26,7 @@ class MomentService
     }
 
     //获取最新所有人的Moment
-    public function getNewestMoment()
+    public function getNewestMoment($user_id)
     {
 //        $momentData = DB::table('moments')->where('status',0)
 //                            ->select('id','writer','pics_url','content','likes_num','comments_num')
@@ -43,6 +45,8 @@ class MomentService
         foreach ($momentData['data'] as &$data)
         {
             $data['tags'] = json_decode($data['tags']);
+
+            $data['notFollowed'] = $user_id == $data['writer'] ? -1 : UserService::checkIfFollowed($user_id,$data['writer']);
         }
         return $momentData;
     }
@@ -70,7 +74,7 @@ class MomentService
     }
 
     //获取某人所有moment
-    public function getMomentByUserId($user_id)
+    public function getMomentByUserId($my_user_id , $user_id)
     {
         $momentData = DB::table('moments')->where('status',0)->where('user_id',$user_id)
             ->join('users','moments.writer','=','users.user_id')
@@ -84,6 +88,7 @@ class MomentService
         foreach ($momentData['data'] as &$data)
         {
             $data['tags'] = json_decode($data['tags']);
+            $data['notFollowed'] = $my_user_id == $data['writer'] ? -1 : UserService::checkIfFollowed($my_user_id,$data['writer']);
         }
 
         return $momentData;
@@ -91,27 +96,60 @@ class MomentService
 
     public function getAllMyLikedMoment($user_id)   //todo 优化
     {
-//        $momentData = DB::table('moments')->where('status',0)->where('user_id',$user_id)
-//            ->whereExists(function ($query,$user_id){
+//        $momentData = DB::table('moments')->where('status',0)     // 无法用like创建时间排序 ，废弃
+//            ->whereExists(function ($query) use ($user_id) {
 //                $query->select(DB::raw(1))
 //                    ->from('likes')
 //                    ->where('likes.from',$user_id)
-//                    ->where('moments.id','=','likes.to');
+//                    ->whereRaw('likes.to = moments.id');    //一定用 Raw 否则查找不到 ， 这个whereExists没错 ，可以参考
 //            })
 //            ->join('users','moments.writer','=','users.user_id')
 //            ->join('suits','moments.suit_id','=','suits.id')
-//            ->join('likes','likes.from','=','users.user_id')
+        //如果在这里join like ， likes.from = user.user_id 这时某user的别的没被like的也会被连接进去
 //            ->select('moments.content','moments.writer','users.avatar_url','moments.id','users.nickname'
 //                ,'moments.likes_num','moments.comments_num','moments.views_num','suits.clothes as pic_url',
 //                'suits.request_id','suits.tags')
 //            ->orderBy('moments.created_at', 'desc')
 //            ->paginate(24);
-//        $momentData = json_decode(json_encode($momentData),true);
-//        foreach ($momentData['data'] as &$data)
-//        {
-//            $data['tags'] = json_decode($data['tags']);
-//        }
-//        return $momentData;
+
+        $momentData = DB::table('likes')
+            ->where('from',$user_id)
+            ->join('moments','moments.id','=','likes.to')
+            ->join('users','moments.writer','=','users.user_id')
+            ->join('suits','moments.suit_id','=','suits.id')
+            ->select('moments.content','moments.writer','users.avatar_url','moments.id','users.nickname'
+                ,'moments.likes_num','moments.comments_num','moments.views_num','suits.clothes as pic_url',
+                'suits.request_id','suits.tags')
+            ->orderBy('likes.created_at', 'desc')
+            ->paginate(24);
+        $momentData = json_decode(json_encode($momentData),true);
+        foreach ($momentData['data'] as &$data)
+        {
+            $data['tags'] = json_decode($data['tags']);
+            $data['notFollowed'] = $user_id == $data['writer'] ? -1 : UserService::checkIfFollowed($user_id,$data['writer']);
+        }
+        return $momentData;
+    }
+
+    public function getAllMyFollowingMoment($user_id)
+    {
+        $momentData = DB::table('follows')
+            ->where('from',$user_id)
+            ->join('users','follows.to','=','users.user_id')
+            ->join('moments','moments.writer','=','users.user_id')      //分叉
+            ->join('suits','moments.suit_id','=','suits.id')
+            ->select('moments.content','moments.writer','users.avatar_url','moments.id','users.nickname'
+                ,'moments.likes_num','moments.comments_num','moments.views_num','suits.clothes as pic_url',
+                'suits.request_id','suits.tags')
+            ->orderBy('moments.created_at', 'desc')
+            ->paginate(24);
+        $momentData = json_decode(json_encode($momentData),true);
+        foreach ($momentData['data'] as &$data)
+        {
+            $data['tags'] = json_decode($data['tags']);
+            $data['notFollowed'] = $user_id == $data['writer'] ? -1 : UserService::checkIfFollowed($user_id,$data['writer']);
+        }
+        return $momentData;
     }
 
     public function getMomentById($moment_id)
