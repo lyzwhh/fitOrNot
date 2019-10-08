@@ -163,7 +163,7 @@ class UserService
             'from'  =>  $from,
             'to'    =>  $to
         ])->first();
-        return ($data == null);   //没关注返回1
+        return intval($data == null);   //没关注返回1
     }
 
     public function getAllFollowed($user_id)
