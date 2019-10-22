@@ -192,7 +192,7 @@ return [
 
     'aliases' => [
 
-        'App' => Illuminate\Support\Facades\App::class,
+        'App' => Illuminate\Support\Facades\App::class,     //基础服务不在providers里面 , 在index.php第二行代码实例化 , 紧接着在第三方依赖组件库后 , 在providers前实例化
         'Artisan' => Illuminate\Support\Facades\Artisan::class,
         'Auth' => Illuminate\Support\Facades\Auth::class,
         'Blade' => Illuminate\Support\Facades\Blade::class,
