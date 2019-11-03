@@ -386,12 +386,12 @@ use Illuminate\Support\Facades\Validator;class UserController extends Controller
         ]);
     }
 
-    public function WBCallback($code)
+    public function WBCallback(Request $request)
     {
         $wb = new \App\Tools\WeiBo\SaeTOAuthV2(config('weibo.WB_AK'),config('weibo.WB_SK'));
         try{
             $result = $wb->getAccessToken('code',[
-                'code'  =>  $code,
+                'code'  =>  $request->input('code'),
                 'redirect_uri'  =>  config('weibo.WB_CALLBACK')
             ]);
 
