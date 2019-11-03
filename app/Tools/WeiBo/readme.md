@@ -1,0 +1,2 @@
+- 在composer.json中的classmap中添加WeiBo文件夹
+- 添加namespace和use

@@ -27,4 +27,7 @@ Route::group(['prefix' => 'user'],function (){
 
     Route::post('/getVCode','UserController@getVCode');
     Route::post('/registerByVCode','UserController@registerByVCode');
+
+    Route::get('/loginByWB','UserController@loginByWB');
+    Route::get('/wb/callback/{code}','UserController@weiBoCallback');
 });

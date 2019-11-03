@@ -375,4 +375,33 @@ use Illuminate\Support\Facades\Validator;class UserController extends Controller
             ]);
         }
     }
+
+    public function loginByWB()
+    {
+        $wb = new \App\Tools\WeiBo\SaeTOAuthV2(config('weibo.WB_AK'),config('weibo.WB_SK'));
+        $wb_url = $wb->getAuthorizeURL(config('weibo.WB_CALLBACK'),'code',null,'mobile');
+        return response([
+            'errcode'   =>  0,
+            'data'  =>  $wb_url
+        ]);
+    }
+
+    public function WBCallback($code)
+    {
+        $wb = new \App\Tools\WeiBo\SaeTOAuthV2(config('weibo.WB_AK'),config('weibo.WB_SK'));
+        try{
+            $result = $wb->getAccessToken('code',[
+                'code'  =>  $code,
+                'redirect_uri'  =>  config('weibo.WB_CALLBACK')
+            ]);
+
+        }catch (\Exception $exception){
+
+            echo $exception->getMessage();
+            $result = 'exception';
+        }
+
+        dd($result);
+
+    }
 }

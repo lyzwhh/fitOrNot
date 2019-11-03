@@ -8,3 +8,4 @@
   - aop/AopClient.php
   
    - lotusphp_runtime/Cookie/Cookie.php
+- AopClient 中注释掉第一行
