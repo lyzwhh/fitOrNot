@@ -13,7 +13,10 @@ use App\Services\WxxcxService;
 use App\Services\TokenService;
 use App\Services\UserService;
 
-use Illuminate\Support\Facades\Validator;class UserController extends Controller
+use Illuminate\Support\Facades\Validator;
+use Laravel\Socialite\Facades\Socialite;
+
+class UserController extends Controller
 {
     private $wxxcxService;
     private $tokenService;
@@ -403,5 +406,16 @@ use Illuminate\Support\Facades\Validator;class UserController extends Controller
 
         dd($result);
 
+    }
+
+    public function loginByQQ()
+    {
+        return Socialite::with('qq')->redirect();
+    }
+
+    public function QQCallback()
+    {
+        $user = Socialite::driver('qq')->user();
+        dd($user);
     }
 }

@@ -30,4 +30,8 @@ Route::group(['prefix' => 'user'],function (){
 
     Route::get('/loginByWB','UserController@loginByWB');
     Route::get('/wb/callback','UserController@WBCallback');
+
+
+    Route::get('/qq/callback','UserController@QQCallback');
+    Route::get('/loginByQQ','UserController@loginByQQ');
 });
