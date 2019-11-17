@@ -415,27 +415,7 @@ class UserController extends Controller
 
     public function QQCallback(Request $request)
     {
-        // 这里设置了判断，判断是否是用qq登录还是邮件登录
-        if ($request->state && $request->code){
-            $qc=new  \QC();
-            $access_token = $qc->qq_callback();
-            $openid=$qc->get_openid ();
-            $qc=new \QC($access_token,$openid);
-            $userInfo=$qc->get_user_info();
-            $user=User::where('open_id',$openid)->first();
-            //dd ($userInfo);
-            if(!$user){
-                $user = new User();
-                $user->open_id = $openid;
-                $user->name = $userInfo['nickname'];
-                $user->icon = $userInfo['figureurl_1'];
-                $user->save();
-            }
-            //执行登录
-            auth ()->login ($user);
-            //跳转
-            return redirect('/');
-
-        }
+        $user = Socialite::driver('qq')->user();
+        dd($user);
     }
 }
