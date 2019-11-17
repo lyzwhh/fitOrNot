@@ -58,7 +58,7 @@ class PayController extends Controller
     public function AlipayNotify()
     {
         try{
-            $flag = $this->aliPay->rsaCheckV1($_POST,NULL,$this->aliPay->signType);
+            $flag = $this->aliPay->rsaCheckV1($_POST,NULL,$this->aliPay->signType);         //验签 防止他人调用本应支付宝调用的回调接口 , 骗我交易完成
         }catch (\Exception $exception){
 //            LogHelper::make([
 //                'notify_check_sign'=>'error'
