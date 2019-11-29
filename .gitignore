@@ -18,3 +18,5 @@ yarn-error.log
 #mac end
 
 composer.lock
+
+/app/Tools/Alipay/tmp
