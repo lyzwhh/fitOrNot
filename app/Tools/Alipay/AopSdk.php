@@ -16,6 +16,7 @@
 if (!defined("AOP_SDK_WORK_DIR"))
 {
 	define("AOP_SDK_WORK_DIR", "/tmp/");
+//    define("AOP_SDK_WORK_DIR", dirname(__FILE__) . "/tmp/");        //在windows下需要用这个代替上面
 }
 /**
  * 是否处于开发模式

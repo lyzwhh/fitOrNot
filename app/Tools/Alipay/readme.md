@@ -9,3 +9,5 @@
   
    - lotusphp_runtime/Cookie/Cookie.php
 - AopClient 中注释掉第一行
+
+- invalid [default store dir]: /tmp/ (0)错误 参考 ：https://www.cnblogs.com/yangzailu/p/11752330.html

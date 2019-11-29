@@ -8,7 +8,7 @@
 
 namespace App\Tools;
 
-include 'AliPay/AopSdk.php';
+include 'Alipay/AopSdk.php';
 
 class Alipay
 {
