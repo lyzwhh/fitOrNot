@@ -14,13 +14,39 @@ class Cors
     public function handle($request, Closure $next)
     {
         $response = $next($request);
-        if ($response instanceof BinaryFileResponse) {
+//        if ($response instanceof BinaryFileResponse) {
+//            return $response;
+//        }
+//        $response->header('Access-Control-Allow-Origin', '*');
+//        $response->header('Access-Control-Allow-Headers', 'Origin, Content-Type, Cookie, Accept,token,tokenId,token_type,Accept,X-Requested-With');
+//        $response->header('Access-Control-Allow-Methods', 'GET, POST, PATCH,DELETE,PUT, OPTIONS');
+//        $response->header('Access-Control-Allow-Credentials', 'true');
+//        return $response;
+
+
+
+        $IlluminateResponse = 'Illuminate\Http\Response';
+        $SymfonyResopnse = 'Symfony\Component\HttpFoundation\Response';
+        $headers = [
+            'Access-Control-Allow-Origin' => '*',
+            'Access-Control-Allow-Methods' => 'POST, GET, OPTIONS, PUT, PATCH, DELETE',
+            'Access-Control-Allow-Headers' => 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Authorization , Access-Control-Request-Headers, X-CSRF-TOKEN'
+        ];
+
+        if ($response instanceof $IlluminateResponse) {
+            foreach ($headers as $key => $value) {
+                $response->header($key, $value);
+            }
             return $response;
         }
-        $response->header('Access-Control-Allow-Origin', '*');
-        $response->header('Access-Control-Allow-Headers', 'Origin, Content-Type, Cookie, Accept,token,tokenId,token_type,Accept,X-Requested-With');
-        $response->header('Access-Control-Allow-Methods', 'GET, POST, PATCH,DELETE,PUT, OPTIONS');
-        $response->header('Access-Control-Allow-Credentials', 'true');
+
+        if ($response instanceof $SymfonyResopnse) {
+            foreach ($headers as $key => $value) {
+                $response->headers->set($key, $value);
+            }
+            return $response;
+        }
+
         return $response;
     }
 }

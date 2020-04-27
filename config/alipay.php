@@ -14,11 +14,11 @@ return [
     'ALIPAY_RSA_PRIVATE_KEY' => env('ALIPAY_RSA_PRIVATE_KEY'),
 
     //异步通知地址
-    'notify_url' => "",
+    'notify_url' => env("ALIPAY_NOTIFY_URL"),
     //http://工程公网访问地址/alipay.trade.wap.pay-PHP-UTF-8/notify_url.php
 
     //同步跳转
-    'return_url' => "",
+    'return_url' => env("ALIPAY_RETURN_URL"),
     //http://mitsein.com/alipay.trade.wap.pay-PHP-UTF-8/return_url.php
     // jk.mrwangqi.com
 

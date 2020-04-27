@@ -1,0 +1,1486 @@
+{
+	"info": {
+		"_postman_id": "0c37ea5c-0f11-4b30-a7f0-14d86a2da6bc",
+		"name": "fitOrNot newest",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "不经过服务器access_token",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wx3041c6b5117e27bd&secret=ad6ce576aaad4bb613ffb8510719bb01",
+					"protocol": "https",
+					"host": [
+						"api",
+						"weixin",
+						"qq",
+						"com"
+					],
+					"path": [
+						"cgi-bin",
+						"token"
+					],
+					"query": [
+						{
+							"key": "grant_type",
+							"value": "client_credential"
+						},
+						{
+							"key": "appid",
+							"value": "wx3041c6b5117e27bd"
+						},
+						{
+							"key": "secret",
+							"value": "ad6ce576aaad4bb613ffb8510719bb01"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "不经过服务直接urlcode2session",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.weixin.qq.com/sns/jscode2session?appid=wx3041c6b5117e27bd&secret=ad6ce576aaad4bb613ffb8510719bb01&js_code=0335I56718xl1L1Tmd571Z616715I56S&grant_type=authorization_code",
+					"protocol": "https",
+					"host": [
+						"api",
+						"weixin",
+						"qq",
+						"com"
+					],
+					"path": [
+						"sns",
+						"jscode2session"
+					],
+					"query": [
+						{
+							"key": "appid",
+							"value": "wx3041c6b5117e27bd"
+						},
+						{
+							"key": "secret",
+							"value": "ad6ce576aaad4bb613ffb8510719bb01"
+						},
+						{
+							"key": "js_code",
+							"value": "0335I56718xl1L1Tmd571Z616715I56S"
+						},
+						{
+							"key": "grant_type",
+							"value": "authorization_code"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "code2session",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"code\"\t:\t\"033dzCzM0z3lea2FgcBM0T7DzM0dzCzo\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}user/code2session",
+					"host": [
+						"{{url}}user"
+					],
+					"path": [
+						"code2session"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "19/09 [用户] setuserInfo",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "token",
+						"type": "text",
+						"value": "{{token}}"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"data\"\t:\t\n\t{\n\t\t\"height\"\t:\t123,\n\t\t\"weight\"\t:\t123,\n\t\t\"signature\"\t:\t\"四五六四五七\",\n\t\t\"hide_figure\"\t:\t1,\n\t\t\"age\"\t:\t21\n\t}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}user/userInfo",
+					"host": [
+						"{{url}}user"
+					],
+					"path": [
+						"userInfo"
+					]
+				},
+				"description": "都选填\n- 存在height时,\b不能为空,数字,范围 0~280\n- height\n- weight\t同height 范围0~200\n- hide_figure\t0|1\n- age\t0~150\n- nickname\n- signature  把简介放在这儿\n- avatar_url"
+			},
+			"response": []
+		},
+		{
+			"name": "19/09 [用户]\b getuserInfo",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}user/userInfo",
+					"host": [
+						"{{url}}user"
+					],
+					"path": [
+						"userInfo"
+					]
+				},
+				"description": "- followers 为关注者的数目\n- following 为自己关注数目\n\n### 多余的参数先无视吧 , 需求完全定下写完了我再把他们删了"
+			},
+			"response": []
+		},
+		{
+			"name": "19/09 [衣物] setClothes",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"clothes\" : \n\t{\n\t\t\"pic_url\" : \"urlurl.com\",\n\t\t\"price\"\t:\t\"400\",\n\t\t\"color\" :\t\"1\",\n\t\t\"category\"\t:\t\"上衣-卫衣\",\n\t\t\"brand\" : \"测试\",\n\t\t\"tags\"\t:\t\n\t\t[\n\t\t\t{\n\t\t\t\t\"tag_name\"\t:\t\"烧烤\",\n\t\t\t\t\"tag_type\"\t:\t\"场景\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"tag_name\"\t:\t\"冬天\",\n\t\t\t\t\"tag_type\"\t:\t\"季节\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"tag_name\"\t:\t\"春天\",\n\t\t\t\t\"tag_type\"\t:\t\"季节\"\n\t\t\t},\n\t\t\t{\n\t\t\t\t\"tag_name\"\t:\t\"韩系\",\n\t\t\t\t\"tag_type\"\t:\t\"风格\"\n\t\t\t}\n\t\t],\n\t\t\"remarks\"\t:\t\"好看\"\n\t\t\t\n\t}\n}"
+				},
+				"url": {
+					"raw": "{{url}}clothes/clothes",
+					"host": [
+						"{{url}}clothes"
+					],
+					"path": [
+						"clothes"
+					]
+				},
+				"description": "- 只有pic_url和category是必填 ，其余选填空\n- tags数组顺序为用户添加顺序\n- remarks 为备注\n### 返回值 “errcode” ： 0"
+			},
+			"response": []
+		},
+		{
+			"name": "19/09 [衣物] getClothes",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "",
+						"name": "Content-Type",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{url}}clothes/clothes",
+					"host": [
+						"{{url}}clothes"
+					],
+					"path": [
+						"clothes"
+					]
+				},
+				"description": "### 获取所有衣物 , 衣柜的首页\n### 按照创建时间排序,新的在前面"
+			},
+			"response": []
+		},
+		{
+			"name": "19/09 [衣物] updateClothes",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "",
+						"name": "Content-Type",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"clothes\" : {\n\t\t\t\"id\" : \"7\",\n\t\t\t\"brand\" : \"牛客\",\n\t\t\t\"remarks\" :\t\"实惠啊\"\n\t}\n}"
+				},
+				"url": {
+					"raw": "{{url}}clothes/clothes",
+					"host": [
+						"{{url}}clothes"
+					],
+					"path": [
+						"clothes"
+					]
+				},
+				"description": "### id必填,其余选填\n- 'id'\t衣服的id,必填\n- 'pic_url'\n- 'category'\n- 'brand'\n- 'color'\n- 'tags'\n- 'remarks'"
+			},
+			"response": []
+		},
+		{
+			"name": "19/09 [衣服] deleteClothes",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}clothes/clothes/12",
+					"host": [
+						"{{url}}clothes"
+					],
+					"path": [
+						"clothes",
+						"12"
+					]
+				},
+				"description": "url 最后一个数为衣服id"
+			},
+			"response": []
+		},
+		{
+			"name": "19/09 [衣物] getClothesByWord",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"word\"\t:\t\"上衣\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}clothes/clothes/like",
+					"host": [
+						"{{url}}clothes"
+					],
+					"path": [
+						"clothes",
+						"like"
+					]
+				},
+				"description": "### 下拉框分类查询\n### 随便填写大类或者小类即(上衣-风衣)中的上衣或者风衣"
+			},
+			"response": []
+		},
+		{
+			"name": "19/10 [朋友圈] createMoment",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"suit_id\"\t:\t27,\n\t\"content\" : \"人工智能\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}moment/moment",
+					"host": [
+						"{{url}}moment"
+					],
+					"path": [
+						"moment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "19/10 [朋友圈] getMoment",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{url}}moment/moment",
+					"host": [
+						"{{url}}moment"
+					],
+					"path": [
+						"moment"
+					]
+				},
+				"description": "- moment最新流（所有人的说说）\n- writer为创建者的user_id\n- content为文字内容\n- notFollowed 为-1时代表发表者是自己 ， true是没关注 ，false是关注了"
+			},
+			"response": []
+		},
+		{
+			"name": "othersInfo",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}user/othersInfo/2",
+					"host": [
+						"{{url}}user"
+					],
+					"path": [
+						"othersInfo",
+						"2"
+					]
+				},
+				"description": "url最后一个参数为user_id\n该接口为用户信息主页，分为用户个人信息和用户所有说说"
+			},
+			"response": []
+		},
+		{
+			"name": "19/10 [朋友圈&用户信息] getOne'sMoment",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{url}}moment/getonesmoment/1",
+					"host": [
+						"{{url}}moment"
+					],
+					"path": [
+						"getonesmoment",
+						"1"
+					]
+				},
+				"description": "### url最后一个参数为user_id\n### 该接口用于我的发布 （和他人的详细页面？）"
+			},
+			"response": []
+		},
+		{
+			"name": "19/09 [关注] createFollow",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}user/follow/2",
+					"host": [
+						"{{url}}user"
+					],
+					"path": [
+						"follow",
+						"2"
+					]
+				},
+				"description": "url最后一个参数为关注对象的user_id\n返回值\n- 0 关注成功\n- -1 失败,不能关注自己\n- -2 已经关注,不能重复关注"
+			},
+			"response": []
+		},
+		{
+			"name": "19/09 [关注] checkIfFollowed",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}user/checkIfFollowed/2",
+					"host": [
+						"{{url}}user"
+					],
+					"path": [
+						"checkIfFollowed",
+						"2"
+					]
+				},
+				"description": "用于判断是否已经关注，显示关注图标样式（√或者是➕）\n返回值\n- 0 为未关注\n- -1 为已经关注"
+			},
+			"response": []
+		},
+		{
+			"name": "19/09 [关注] deleteFollow",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}user/follow/2",
+					"host": [
+						"{{url}}user"
+					],
+					"path": [
+						"follow",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "19/10 [关注] allFollowed",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}user/allFollowed",
+					"host": [
+						"{{url}}user"
+					],
+					"path": [
+						"allFollowed"
+					]
+				},
+				"description": "获取自己所有关注了（被动）的人的user_id（to） 和昵称和头像。"
+			},
+			"response": []
+		},
+		{
+			"name": "19/10 [关注] allFollowing",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}user/allFollowing",
+					"host": [
+						"{{url}}user"
+					],
+					"path": [
+						"allFollowing"
+					]
+				},
+				"description": "自己主动关注的所有用户"
+			},
+			"response": []
+		},
+		{
+			"name": "19/10 [点赞] createLike",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{url}}moment/like/109",
+					"host": [
+						"{{url}}moment"
+					],
+					"path": [
+						"like",
+						"109"
+					]
+				},
+				"description": "对一个moment进行点赞，id为moment的id\n\n- 0 like成功\n- -1 失败,重复like"
+			},
+			"response": []
+		},
+		{
+			"name": "19/10 [点赞] deleteLike",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{url}}moment/like/1",
+					"host": [
+						"{{url}}moment"
+					],
+					"path": [
+						"like",
+						"1"
+					]
+				},
+				"description": "最后一个参数为朋友圈的id"
+			},
+			"response": []
+		},
+		{
+			"name": "19/10 [点赞] checkIfLiked",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{url}}moment/checkIfLiked/1",
+					"host": [
+						"{{url}}moment"
+					],
+					"path": [
+						"checkIfLiked",
+						"1"
+					]
+				},
+				"description": "返回值\n- 0 为未like\n- -1 为已经like"
+			},
+			"response": []
+		},
+		{
+			"name": "19/10 [用户信息] getNicknameByOpenid",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}user/getNicknameByUserId/2",
+					"host": [
+						"{{url}}user"
+					],
+					"path": [
+						"getNicknameByUserId",
+						"2"
+					]
+				},
+				"description": "- data 为昵称\n- url中最后的字符串为参数,填被查询人的user_id"
+			},
+			"response": []
+		},
+		{
+			"name": "19/10 [朋友圈] createComment",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "token",
+						"type": "text",
+						"value": "{{token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"comment\"\t:\t{\n\t\t\t\"content\"\t:\t\"一一得一\",\n\t\t\t\"to\"\t:\t\"4\"\n\t}\n}"
+				},
+				"url": {
+					"raw": "{{url}}moment/comment",
+					"host": [
+						"{{url}}moment"
+					],
+					"path": [
+						"comment"
+					]
+				},
+				"description": "- content ,to必填,to 为朋友圈/moment的id\n- 选填refer ,用来代表这是一条回复评论(回复别人的评论的评论),refer 为回复对象的user_id"
+			},
+			"response": []
+		},
+		{
+			"name": "19/09 [朋友圈] deleteMoment",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{url}}moment/moment/1",
+					"host": [
+						"{{url}}moment"
+					],
+					"path": [
+						"moment",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "19/10 [朋友圈] deleteComment",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}moment/comment/6",
+					"host": [
+						"{{url}}moment"
+					],
+					"path": [
+						"comment",
+						"6"
+					]
+				},
+				"description": "最后一个为url参数,为comment的id"
+			},
+			"response": []
+		},
+		{
+			"name": "10/10 [朋友圈] getCommentByMoment",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "token",
+						"type": "text",
+						"value": "{{token}}"
+					}
+				],
+				"url": {
+					"raw": "{{url}}moment/comment/2",
+					"host": [
+						"{{url}}moment"
+					],
+					"path": [
+						"comment",
+						"2"
+					]
+				},
+				"description": "### 通过MomentId 获取所有这条朋友圈的评论,按照时间递增顺序\n### 这个接口会增加moment的views_num\n- 当refer不为null时,存在referName,referName 为回复对象的名字\n- fromName 为评论者的名字"
+			},
+			"response": []
+		},
+		{
+			"name": "【废除】getConfig",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}user/getConfig",
+					"host": [
+						"{{url}}user"
+					],
+					"path": [
+						"getConfig"
+					]
+				},
+				"description": "获取是否隐藏身材。\n1为隐藏"
+			},
+			"response": []
+		},
+		{
+			"name": "19/09 [搭配] setSuit",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "token",
+						"type": "text",
+						"value": "{{token}}"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"suit\": {\n        \"clothes\": \"qiniu_urlrul.com\",\n        \"clothes_ids\"\t:\t[1,2,3],\n        \"title\": \"我的第一个搭配\",\n        \"category\": \"休闲\",\n        \"tags\": [\n            {\n                \"tag_name\": \"烧烤\",\n                \"tag_type\": \"场景\"\n            },\n            {\n                \"tag_name\": \"冬天\",\n                \"tag_type\": \"季节\"\n            },\n            {\n                \"tag_name\": \"春天\",\n                \"tag_type\": \"季节\"\n            },\n            {\n                \"tag_name\": \"韩系\",\n                \"tag_type\": \"风格\"\n            }\n        ],\n        \"remarks\": \"不容易染上烧烤的味道\",\n        \"background\": \"**这个背景还没定用什么方式,反正是个string\"\n    }\n}"
+				},
+				"url": {
+					"raw": "{{url}}clothes/suit",
+					"host": [
+						"{{url}}clothes"
+					],
+					"path": [
+						"suit"
+					]
+				},
+				"description": "- clothes 为搭配结果的图片的url\n- id *选填* 为各个单品的id , 如果该id的衣服不属于用户 , 返回-1\n- title *选填* 为标题 , 不填将会被设置为\b套装的id\n- category 类别\n- tags *选填* 同单品的tags\n- remarks *选填* 备注\n- background *选填* 背景\n- \n## 确保id中的衣物是属于这个token的"
+			},
+			"response": []
+		},
+		{
+			"name": "19/09 [搭配] getSuit",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}clothes/suit",
+					"host": [
+						"{{url}}clothes"
+					],
+					"path": [
+						"suit"
+					]
+				},
+				"description": "### \b获取全部搭配,新添加的在前面\n## 如果其中一个搭配是又搭配师搭配的 , 在那个搭配中会多一个key \"helper\\_id\" 其\bvalue为搭配师的user_id ,以及helper\\_nickname"
+			},
+			"response": []
+		},
+		{
+			"name": "19/09 [搭配] getSuitByWord",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"word\"\t:\t\"休闲\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}clothes/suit/like",
+					"host": [
+						"{{url}}clothes"
+					],
+					"path": [
+						"suit",
+						"like"
+					]
+				},
+				"description": "### 用于分类获取搭配，同分类获取单品"
+			},
+			"response": []
+		},
+		{
+			"name": "19/10 [搭配] deleteSuit",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}clothes/suit/6",
+					"host": [
+						"{{url}}clothes"
+					],
+					"path": [
+						"suit",
+						"6"
+					]
+				},
+				"description": "- 成功 errcode 0\n- 失败 errcode -1"
+			},
+			"response": []
+		},
+		{
+			"name": "【废除】wearSuit",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}clothes/suit/wear/2",
+					"host": [
+						"{{url}}clothes"
+					],
+					"path": [
+						"suit",
+						"wear",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "【废除】setConfig",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/user/setConfig/1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"user",
+						"setConfig",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "setName",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "token",
+						"type": "text",
+						"value": "{{token}}"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"data\" : {\n\t\t\"nickname\"\t:\t\"舒克\",\n\t\t\"avatar_url\"\t:\t\"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1559370842820&di=675393119471806412895c2fbc3b72fa&imgtype=0&src=http%3A%2F%2Fimg5.duitang.com%2Fuploads%2Fitem%2F201402%2F27%2F20140227171316_8Gw5y.thumb.600_0.jpeg\"\n\t}\n}"
+				},
+				"url": {
+					"raw": "{{url}}user/setName",
+					"host": [
+						"{{url}}user"
+					],
+					"path": [
+						"setName"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "19/09 [注册登录]  getVCode",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"phone\"\t: 13081860884\n}"
+				},
+				"url": {
+					"raw": "{{url}}user/getVCode",
+					"host": [
+						"{{url}}user"
+					],
+					"path": [
+						"getVCode"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "19/09 [注册登录] registerByVCode",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"phone\"\t: 13081860884,\n\t\"VCode\"\t: \"16857\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}user/registerByVCode",
+					"host": [
+						"{{url}}user"
+					],
+					"path": [
+						"registerByVCode"
+					]
+				},
+				"description": "### VCode一定要是string ， 否则在以0开头的VCode时会发生不通过验证的情况\n- first_register 为小程序用 , 判断是否为刚刚注册的账号"
+			},
+			"response": []
+		},
+		{
+			"name": "19/10 [朋友圈] getAllLikedMoment",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{url}}moment/allLikedMoment",
+					"host": [
+						"{{url}}moment"
+					],
+					"path": [
+						"allLikedMoment"
+					]
+				},
+				"description": "- data 中的id为moment的id\n- notFollowed为-1时表示是自己 ， true为没关注 ， false为关注了"
+			},
+			"response": []
+		},
+		{
+			"name": "19/10 [朋友圈] getAllFollowingMoment",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{url}}moment/allFollowingMoment",
+					"host": [
+						"{{url}}moment"
+					],
+					"path": [
+						"allFollowingMoment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "10/10 [朋友圈] refresh",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "token",
+						"type": "text",
+						"value": "{{token}}"
+					}
+				],
+				"url": {
+					"raw": "{{url}}moment/refresh/1",
+					"host": [
+						"{{url}}moment"
+					],
+					"path": [
+						"refresh",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "19/10 [请求] 创建搭配请求",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"SRequest\"\t:\t{\n\t\t\"request_to\"\t:\t\"2\",\n\t\t\"order_msg\"\t:\t\"要好看的！\"\n\t}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}clothes/SR",
+					"host": [
+						"{{url}}clothes"
+					],
+					"path": [
+						"SR"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "19/10 [请求] 获取所有发送的搭配请求",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{url}}clothes/SR/SRing",
+					"host": [
+						"{{url}}clothes"
+					],
+					"path": [
+						"SR",
+						"SRing"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "19/10 [请求] 获取所有收到的搭配请求",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{url}}clothes/SR/SRing",
+					"host": [
+						"{{url}}clothes"
+					],
+					"path": [
+						"SR",
+						"SRing"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "19/10 [请求&衣物] 通过搭配请求获取他人的单品",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{url}}clothes/SR/clothes/3",
+					"host": [
+						"{{url}}clothes"
+					],
+					"path": [
+						"SR",
+						"clothes",
+						"3"
+					]
+				},
+				"description": "- url 最后一个参数为request_id\n-"
+			},
+			"response": []
+		},
+		{
+			"name": "19/09 [请求&搭配] setSuitBySR",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "token",
+						"type": "text",
+						"value": "{{token}}"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"suit\": {\n    \t\"request_id\":\"2\",\n    \t\"feed_back\":\"花了3秒帮你搭好了\",\n    \t\n    \t\n        \"clothes\": \"qiniu_urlrul.com\",\n        \"clothes_ids\"\t:\t[],\n        \"title\": \"我的第一个搭配\",\n        \"category\": \"休闲\",\n        \"tags\": [\n            {\n                \"tag_name\": \"烧烤\",\n                \"tag_type\": \"场景\"\n            },\n            {\n                \"tag_name\": \"冬天\",\n                \"tag_type\": \"季节\"\n            },\n            {\n                \"tag_name\": \"春天\",\n                \"tag_type\": \"季节\"\n            },\n            {\n                \"tag_name\": \"韩系\",\n                \"tag_type\": \"风格\"\n            }\n        ],\n        \"remarks\": \"不容易染上烧烤的味道\",\n        \"background\": \"**这个背景还没定用什么方式,反正是个string\"\n    }\n}"
+				},
+				"url": {
+					"raw": "{{url}}clothes/SR/clothes",
+					"host": [
+						"{{url}}clothes"
+					],
+					"path": [
+						"SR",
+						"clothes"
+					]
+				},
+				"description": "- request_id 为你收到的那个请求的id\n- 失败返回-1和errmsg\n- feed_back 搭配者给请求者的message"
+			},
+			"response": []
+		},
+		{
+			"name": "19/10 [请求&搭配] 从请求中点开自己搭配",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{url}}clothes/SR/suit/3",
+					"host": [
+						"{{url}}clothes"
+					],
+					"path": [
+						"SR",
+						"suit",
+						"3"
+					]
+				},
+				"description": "- 最后一个参数是request_id"
+			},
+			"response": []
+		},
+		{
+			"name": "alipay",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "token",
+						"type": "text",
+						"value": "{{token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"comment\"\t:\t{\n\t\t\t\"content\"\t:\t\"一一得一\",\n\t\t\t\"to\"\t:\t\"4\"\n\t}\n}"
+				},
+				"url": {
+					"raw": "{{url}}pay/alipay",
+					"host": [
+						"{{url}}pay"
+					],
+					"path": [
+						"alipay"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "TEST PAY",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/pay/alipay",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"pay",
+						"alipay"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "微博登陆",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}user/loginByWB",
+					"host": [
+						"{{url}}user"
+					],
+					"path": [
+						"loginByWB"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "qq登陆",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}user/loginByQQ",
+					"host": [
+						"{{url}}user"
+					],
+					"path": [
+						"loginByQQ"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

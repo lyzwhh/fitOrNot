@@ -1,8 +1,6 @@
-# (相对🐶)快速部署laravel
-### 需要php artisan key:generate 更新.env中的App_Key
-- cors
-- 时区
-
+# fitOrNot
+### 记录衣服和套装并在圈子内分享交流。拍照上传自己的衣物后可以app内自由搭配不同衣物，预览搭配效果，也能保存分享到圈子，在圈子中能分享交流用户展示出的衣物搭配。
+#### 接口详情可导入postman包（fitOrNot newest.postman_collection.json）查看。postman环境变量中url设置为https://ssl.lyzwhh.top/  。体验token：e149ca8e6e1fc1ce2ea7a5bfdca6e568
 
 <p align="center"><img src="https://laravel.com/assets/img/components/logo-laravel.svg"></p>
 
