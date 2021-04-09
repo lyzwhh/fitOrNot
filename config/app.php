@@ -228,5 +228,11 @@ return [
 
         'Socialite' => Laravel\Socialite\Facades\Socialite::class,  //qq登陆
     ],
+    //debug 报错界面隐藏信息
+    'debug_blacklist' => [
+        '_COOKIE' => array_diff(array_keys($_COOKIE), array()),
+        '_SERVER' => array_diff(array_keys($_SERVER), array('APP_URL', 'QUERY_STRING')),
+        '_ENV' => array_diff(array_keys($_ENV), array()),
+    ],
 
 ];
